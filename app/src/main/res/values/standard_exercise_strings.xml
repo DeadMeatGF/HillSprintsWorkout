@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="exercise_001">Air Squats</string>
+    <string name="exercise_002">Arm Circles</string>
+    <string name="exercise_003">Bicycles</string>
+    <string name="exercise_004">Down-ups</string>
+    <string name="exercise_005">Leg Raises</string>
+    <string name="exercise_006">Lunges</string>
+    <string name="exercise_007">Mountain climber</string>
+    <string name="exercise_008">Plank</string>
+    <string name="exercise_009">Push ups</string>
+    <string name="exercise_010">Shoulder Bridge</string>
+    <string name="exercise_011">Sit ups</string>
+    <string name="exercise_012">Squat thrusts</string>
+</resources>

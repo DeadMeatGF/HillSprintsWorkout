@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="exercise_101">1-leg Air squats</string>
+    <string name="exercise_102">Burpees</string>
+    <string name="exercise_103">Jumping Lunges</string>
+    <string name="exercise_104">Jumping Squats</string>
+    <string name="exercise_105">Lateral bear crawl</string>
+    <string name="exercise_106">Press-up plank</string>
+    <string name="exercise_107">Side planks</string>
+</resources>
