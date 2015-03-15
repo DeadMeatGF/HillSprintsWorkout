@@ -1,15 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="exercise_001">Air Squats</string>
-    <string name="exercise_002">Arm Circles</string>
-    <string name="exercise_003">Bicycles</string>
-    <string name="exercise_004">Down-ups</string>
-    <string name="exercise_005">Leg Raises</string>
-    <string name="exercise_006">Lunges</string>
-    <string name="exercise_007">Mountain climber</string>
-    <string name="exercise_008">Plank</string>
-    <string name="exercise_009">Push ups</string>
-    <string name="exercise_010">Shoulder Bridge</string>
-    <string name="exercise_011">Sit ups</string>
-    <string name="exercise_012">Squat thrusts</string>
+    <string-array name="standard_exercises">
+        <item>Air Squats</item>
+        <item>Arm Circles</item>
+        <item>Bicycles</item>
+        <item>Down-ups</item>
+        <item>Leg Raises</item>
+        <item>Mountain climber</item>
+        <item>Plank</item>
+        <item>Push ups</item>
+        <item>Shoulder Bridge</item>
+        <item>Situps</item>
+        <item>Squat thrusts</item>
+        <item>Static Lunges</item>
+    </string-array>
+
+    <integer-array name="standard_exercise_images">
+        <item>@drawable/exercise_001</item>
+        <item>@drawable/exercise_002</item>
+        <item>@drawable/exercise_003</item>
+        <item>@drawable/exercise_004</item>
+        <item>@drawable/exercise_005</item>
+        <item>@drawable/exercise_006</item>
+        <item>@drawable/exercise_007</item>
+        <item>@drawable/exercise_008</item>
+        <item>@drawable/exercise_009</item>
+        <item>@drawable/exercise_010</item>
+        <item>@drawable/exercise_011</item>
+        <item>@drawable/exercise_012</item>
+    </integer-array>
 </resources>
