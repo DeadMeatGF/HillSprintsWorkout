@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="expert_exercises">
+        <item>Burpee-jumps</item>
+        <item>Spiderman pressups</item>
+    </string-array>
+
+    <integer-array name="expert_exercise_images">
+        <item>@drawable/exercise_201</item>
+        <item>@drawable/exercise_202</item>
+    </integer-array>
+</resources>
