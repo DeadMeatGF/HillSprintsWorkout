@@ -4,6 +4,7 @@ package uk.co.stevegiller.deadmeatgf.hillsprintsworkout;
  * Created by DeadMeatGF on 14/03/2015.
  */
 public class Excercise {
+
     private String mName;
     private int mImage;
     private String mDescription;
@@ -14,6 +15,11 @@ public class Excercise {
         this.mImage = image;
         this.mDescription = description;
         this.mSequence = sequence;
+    }
+
+    @Override
+    public String toString() {
+        return mName;
     }
 
     public int getImage() {

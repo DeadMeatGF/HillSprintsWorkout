@@ -1,14 +1,19 @@
 package uk.co.stevegiller.deadmeatgf.hillsprintsworkout;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 
 
 public class HillSprintActivity extends ActionBarActivity {
+
+    private ListView allExercisesListView;
+    private ListView chosenExercisesListView;
     
     private ArrayList<Excercise> fullExerciseList;
     private ArrayList<Excercise> chosenExerciseList;
@@ -20,12 +25,17 @@ public class HillSprintActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hill_sprint);
+        allExercisesListView = (ListView) findViewById(R.id.listView);
+        chosenExercisesListView = (ListView) findViewById(R.id.listView2);
         //-- These need to be collected from Preferences
         intermediate = false;
         expert = false;
         getExercises();
+        ArrayAdapter<Excercise> allExercisesAdapter = new ArrayAdapter<Excercise>(this, android.R.layout.simple_list_item_1, fullExerciseList);
+        ArrayAdapter<Excercise> chosenExercisesAdapter = new ArrayAdapter<Excercise>(this, android.R.layout.simple_list_item_1, chosenExerciseList);
+        allExercisesListView.setAdapter(allExercisesAdapter);
+        chosenExercisesListView.setAdapter(chosenExercisesAdapter);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
