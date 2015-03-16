@@ -173,7 +173,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             setNumberTextView.setText(String.valueOf(sets));
             repNumberTextView.setText(String.valueOf(chosenExerciseList.size()));
         } else if (currentExerciseTextView.getText().equals(chosenExerciseList.get(0).getName())) {
-            exerciseTimer = new MyCountDownTimer(30000, 1000, 5000, MyCountDownTimer.HALFWAY_NOTIFICATION + MyCountDownTimer.SAY_INITIAL_NUMBER_WITH_SECOND, "Recover");
+            exerciseTimer = new MyCountDownTimer(30000, 1000, 5000, MyCountDownTimer.HALFWAY_NOTIFICATION + MyCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Recover");
             exerciseTimer.start();
             exerciseImageView.setImageDrawable(getResources().getDrawable(chosenExerciseList.get(0).getImage()));
             chosenExerciseList.remove(0);
