@@ -5,8 +5,13 @@
         <item>Spiderman pressups</item>
     </string-array>
 
-    <integer-array name="expert_exercise_images">
+    <array name="expert_exercise_images">
         <item>@drawable/exercise_201</item>
         <item>@drawable/exercise_202</item>
-    </integer-array>
+    </array>
+
+    <array name="expert_exercise_thumbs">
+        <item>@drawable/exercise_201_thumb</item>
+        <item>@drawable/exercise_202_thumb</item>
+    </array>
 </resources>

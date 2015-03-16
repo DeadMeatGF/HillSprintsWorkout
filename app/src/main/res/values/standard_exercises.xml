@@ -15,7 +15,7 @@
         <item>Static Lunges</item>
     </string-array>
 
-    <integer-array name="standard_exercise_images">
+    <array name="standard_exercise_images">
         <item>@drawable/exercise_001</item>
         <item>@drawable/exercise_002</item>
         <item>@drawable/exercise_003</item>
@@ -28,5 +28,20 @@
         <item>@drawable/exercise_010</item>
         <item>@drawable/exercise_011</item>
         <item>@drawable/exercise_012</item>
-    </integer-array>
+    </array>
+
+    <array name="standard_exercise_thumbs">
+        <item>@drawable/exercise_001_thumb</item>
+        <item>@drawable/exercise_002_thumb</item>
+        <item>@drawable/exercise_003_thumb</item>
+        <item>@drawable/exercise_004_thumb</item>
+        <item>@drawable/exercise_005_thumb</item>
+        <item>@drawable/exercise_006_thumb</item>
+        <item>@drawable/exercise_007_thumb</item>
+        <item>@drawable/exercise_008_thumb</item>
+        <item>@drawable/exercise_009_thumb</item>
+        <item>@drawable/exercise_010_thumb</item>
+        <item>@drawable/exercise_011_thumb</item>
+        <item>@drawable/exercise_012_thumb</item>
+    </array>
 </resources>

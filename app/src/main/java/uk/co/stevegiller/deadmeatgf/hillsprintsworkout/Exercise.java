@@ -1,20 +1,24 @@
 package uk.co.stevegiller.deadmeatgf.hillsprintsworkout;
 
+import android.graphics.drawable.Drawable;
+
 /**
  * Created by DeadMeatGF on 14/03/2015.
  */
 public class Exercise {
 
     private String mName;
-    private int mImage;
+    private Drawable mImage;
+    private Drawable mThumb;
     private String mDescription;
     private int mSequence;
     private boolean mSelected;
 
-    public Exercise(String name, int image, String description, int sequence, boolean selected) {
+    public Exercise(String name, Drawable image, Drawable thumb, String description, int sequence, boolean selected) {
         this.mName = name;
         this.mImage = image;
         this.mDescription = description;
+        this.mThumb = thumb;
         this.mSequence = sequence;
         this.mSelected = selected;
     }
@@ -24,12 +28,20 @@ public class Exercise {
         return mName;
     }
 
-    public int getImage() {
+    public Drawable getImage() {
         return mImage;
     }
 
-    public void setImage(int mImage) {
+    public void setImage(Drawable mImage) {
         this.mImage = mImage;
+    }
+
+    public Drawable getThumb() {
+        return mThumb;
+    }
+
+    public void setThumb(Drawable thumb) {
+        this.mThumb = thumb;
     }
 
     public String getName() {

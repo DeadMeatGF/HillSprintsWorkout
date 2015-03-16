@@ -1,5 +1,6 @@
 package uk.co.stevegiller.deadmeatgf.hillsprintsworkout;
 
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -69,32 +70,40 @@ public class HillSprintActivity extends ActionBarActivity {
         String[] standard_exercises = getResources().getStringArray(R.array.standard_exercises);
         String[] intermediate_exercises = getResources().getStringArray(R.array.intermediate_exercises);
         String[] expert_exercises = getResources().getStringArray(R.array.expert_exercises);
-        int[] standard_images = getResources().getIntArray(R.array.standard_exercise_images);
-        int[] intermediate_images = getResources().getIntArray(R.array.intermediate_exercise_images);
-        int[] expert_images = getResources().getIntArray(R.array.expert_exercise_images);
+        TypedArray standard_images = getResources().obtainTypedArray(R.array.standard_exercise_images);
+        TypedArray intermediate_images = getResources().obtainTypedArray(R.array.intermediate_exercise_images);
+        TypedArray expert_images = getResources().obtainTypedArray(R.array.expert_exercise_images);
+        TypedArray standard_thumbs = getResources().obtainTypedArray(R.array.standard_exercise_thumbs);
+        TypedArray intermediate_thumbs = getResources().obtainTypedArray(R.array.intermediate_exercise_thumbs);
+        TypedArray expert_thumbs = getResources().obtainTypedArray(R.array.expert_exercise_thumbs);
         for(int loop = 0; loop < standard_exercises.length; loop++) {
-            fullExerciseList.add(new Exercise(standard_exercises[loop], standard_images[loop], "", 0, true));
-            chosenExerciseList.add(new Exercise(standard_exercises[loop], standard_images[loop], "", 0, true));
+            fullExerciseList.add(new Exercise(standard_exercises[loop], standard_images.getDrawable(loop), standard_thumbs.getDrawable(loop), "", 0, true));
+            chosenExerciseList.add(new Exercise(standard_exercises[loop], standard_images.getDrawable(loop), standard_thumbs.getDrawable(loop), "", 0, true));
             Log.d(TAG, "Added " + standard_exercises[loop] + " to both lists ...");
+            Log.d(TAG, "new Exercise(" + standard_exercises[loop] + ", " + standard_images.getDrawable(loop).toString() + ", " + standard_thumbs.getDrawable(loop).toString() + ", \"\", 0, true)");
         }
         for (int loop = 0; loop < intermediate_exercises.length; loop++) {
             if(intermediate) {
-                fullExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images[loop], "", 0, true));
-                chosenExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images[loop], "", 0, true));
+                fullExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images.getDrawable(loop), intermediate_thumbs.getDrawable(loop), "", 0, true));
+                chosenExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images.getDrawable(loop), intermediate_thumbs.getDrawable(loop), "", 0, true));
                 Log.d(TAG, "Added " + intermediate_exercises[loop] + " to both lists ...");
+                Log.d(TAG, "new Exercise(" + intermediate_exercises[loop] + ", " + intermediate_images.getDrawable(loop).toString() + ", " + intermediate_thumbs.getDrawable(loop).toString() + ", \"\", 0, true)");
             } else {
-                fullExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images[loop], "", 0, false));
+                fullExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images.getDrawable(loop), intermediate_thumbs.getDrawable(loop), "", 0, false));
                 Log.d(TAG, "Added " + intermediate_exercises[loop] + " to full list but not chosen list ...");
+                Log.d(TAG, "new Exercise(" + intermediate_exercises[loop] + ", " + intermediate_images.getDrawable(loop).toString() + ", " + intermediate_thumbs.getDrawable(loop).toString() + ", \"\", 0, false)");
             }
         }
         for (int loop = 0; loop < expert_exercises.length; loop++) {
             if(expert) {
-                fullExerciseList.add(new Exercise(expert_exercises[loop], expert_images[loop], "", 0, true));
-                chosenExerciseList.add(new Exercise(expert_exercises[loop], expert_images[loop], "", 0, true));
+                fullExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getDrawable(loop), expert_thumbs.getDrawable(loop), "", 0, true));
+                chosenExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getDrawable(loop), expert_thumbs.getDrawable(loop), "", 0, true));
                 Log.d(TAG, "Added " + expert_exercises[loop] + " to both lists ...");
+                Log.d(TAG, "new Exercise(" + expert_exercises[loop] + ", " + expert_images.getDrawable(loop).toString() + ", " + expert_thumbs.getDrawable(loop).toString() + ", \"\", 0, true)");
             } else {
-                fullExerciseList.add(new Exercise(expert_exercises[loop], expert_images[loop], "", 0, false));
+                fullExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getDrawable(loop), expert_thumbs.getDrawable(loop), "", 0, false));
                 Log.d(TAG, "Added " + expert_exercises[loop] + " to full list but not chosen list ...");
+                Log.d(TAG, "new Exercise(" + expert_exercises[loop] + ", " + expert_images.getDrawable(loop).toString() + ", " + expert_thumbs.getDrawable(loop).toString() + ", \"\", 0, false)");
             }
         }
     } 
