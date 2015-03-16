@@ -3,18 +3,20 @@ package uk.co.stevegiller.deadmeatgf.hillsprintsworkout;
 /**
  * Created by DeadMeatGF on 14/03/2015.
  */
-public class Excercise {
+public class Exercise {
 
     private String mName;
     private int mImage;
     private String mDescription;
     private int mSequence;
+    private boolean mSelected;
 
-    public Excercise(String name, int image, String description, int sequence) {
+    public Exercise(String name, int image, String description, int sequence, boolean selected) {
         this.mName = name;
         this.mImage = image;
         this.mDescription = description;
         this.mSequence = sequence;
+        this.mSelected = selected;
     }
 
     @Override
@@ -52,5 +54,13 @@ public class Excercise {
 
     public void setSequence(int mSequence) {
         this.mSequence = mSequence;
+    }
+
+    public boolean isSelected() {
+        return mSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.mSelected = selected;
     }
 }

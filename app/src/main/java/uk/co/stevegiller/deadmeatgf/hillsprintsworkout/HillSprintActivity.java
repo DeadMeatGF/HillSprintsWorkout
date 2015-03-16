@@ -2,6 +2,7 @@ package uk.co.stevegiller.deadmeatgf.hillsprintsworkout;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -9,14 +10,14 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-
 public class HillSprintActivity extends ActionBarActivity {
+    public static final String TAG = "HillSprintActivity";
 
     private ListView allExercisesListView;
     private ListView chosenExercisesListView;
     
-    private ArrayList<Excercise> fullExerciseList;
-    private ArrayList<Excercise> chosenExerciseList;
+    private ArrayList<Exercise> fullExerciseList;
+    private ArrayList<Exercise> chosenExerciseList;
     
     private boolean intermediate;
     private boolean expert;
@@ -31,10 +32,12 @@ public class HillSprintActivity extends ActionBarActivity {
         intermediate = false;
         expert = false;
         getExercises();
-        ArrayAdapter<Excercise> allExercisesAdapter = new ArrayAdapter<Excercise>(this, android.R.layout.simple_list_item_1, fullExerciseList);
-        ArrayAdapter<Excercise> chosenExercisesAdapter = new ArrayAdapter<Excercise>(this, android.R.layout.simple_list_item_1, chosenExerciseList);
+        ExerciseAdapter allExercisesAdapter = new ExerciseAdapter(this, R.layout.exercise_row, fullExerciseList);
+        ExerciseAdapter chosenExercisesAdapter = new ExerciseAdapter(this, R.layout.exercise_row, chosenExerciseList);
         allExercisesListView.setAdapter(allExercisesAdapter);
         chosenExercisesListView.setAdapter(chosenExercisesAdapter);
+        allExercisesAdapter.notifyDataSetChanged();
+        chosenExercisesAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -60,6 +63,7 @@ public class HillSprintActivity extends ActionBarActivity {
     }
     
     private void getExercises() {
+        Log.d(TAG, "Creating exercise lists ...");
         fullExerciseList = new ArrayList<>();
         chosenExerciseList = new ArrayList<>();
         String[] standard_exercises = getResources().getStringArray(R.array.standard_exercises);
@@ -69,19 +73,28 @@ public class HillSprintActivity extends ActionBarActivity {
         int[] intermediate_images = getResources().getIntArray(R.array.intermediate_exercise_images);
         int[] expert_images = getResources().getIntArray(R.array.expert_exercise_images);
         for(int loop = 0; loop < standard_exercises.length; loop++) {
-            fullExerciseList.add(new Excercise(standard_exercises[loop], standard_images[loop], "", 0));
-            chosenExerciseList.add(new Excercise(standard_exercises[loop], standard_images[loop], "", 0));
+            fullExerciseList.add(new Exercise(standard_exercises[loop], standard_images[loop], "", 0, true));
+            chosenExerciseList.add(new Exercise(standard_exercises[loop], standard_images[loop], "", 0, true));
+            Log.d(TAG, "Added " + standard_exercises[loop] + " to both lists ...");
         }
         for (int loop = 0; loop < intermediate_exercises.length; loop++) {
-            fullExerciseList.add(new Excercise(intermediate_exercises[loop], intermediate_images[loop], "", 0));
             if(intermediate) {
-                chosenExerciseList.add(new Excercise(intermediate_exercises[loop], intermediate_images[loop], "", 0));
+                fullExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images[loop], "", 0, true));
+                chosenExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images[loop], "", 0, true));
+                Log.d(TAG, "Added " + intermediate_exercises[loop] + " to both lists ...");
+            } else {
+                fullExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images[loop], "", 0, false));
+                Log.d(TAG, "Added " + intermediate_exercises[loop] + " to full list but not chosen list ...");
             }
         }
         for (int loop = 0; loop < expert_exercises.length; loop++) {
-            fullExerciseList.add(new Excercise(expert_exercises[loop], expert_images[loop], "", 0));
             if(expert) {
-                chosenExerciseList.add(new Excercise(expert_exercises[loop], expert_images[loop], "", 0));
+                fullExerciseList.add(new Exercise(expert_exercises[loop], expert_images[loop], "", 0, true));
+                chosenExerciseList.add(new Exercise(expert_exercises[loop], expert_images[loop], "", 0, true));
+                Log.d(TAG, "Added " + expert_exercises[loop] + " to both lists ...");
+            } else {
+                fullExerciseList.add(new Exercise(expert_exercises[loop], expert_images[loop], "", 0, false));
+                Log.d(TAG, "Added " + expert_exercises[loop] + " to full list but not chosen list ...");
             }
         }
     } 
