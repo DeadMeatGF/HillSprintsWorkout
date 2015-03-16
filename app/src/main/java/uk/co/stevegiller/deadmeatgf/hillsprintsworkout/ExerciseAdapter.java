@@ -48,7 +48,7 @@ public class ExerciseAdapter extends ArrayAdapter<Exercise> {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.exerciseCheckBox.setSelected(exercise.isSelected());
+        holder.exerciseCheckBox.setChecked(exercise.isSelected());
         holder.exerciseTextView.setText(exercise.getName());
         holder.exerciseImageView.setImageDrawable(ctx.getResources().getDrawable(exercise.getThumb()));
 
