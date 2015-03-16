@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Random;
 
 public class HillSprintActivity extends ActionBarActivity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
@@ -24,10 +25,13 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     private ImageView exerciseImageView;
     private TextView setNumberTextView;
     private TextView repNumberTextView;
+    private TextView currentExerciseTextView;
+    private TextView nextExerciseTextView;
     
     private ArrayList<Exercise> fullExerciseList;
     private ArrayList<Exercise> chosenExerciseList;
-    private MyCountDownTimer timer;
+    private ArrayList<Exercise> selectedExerciseList;
+    private MyCountDownTimer exerciseTimer;
     private TextToSpeech countdownSpeaker;
     
     private boolean intermediate;
@@ -41,7 +45,6 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         setContentView(R.layout.activity_hill_sprint);
         countdownSpeaker = new TextToSpeech(this, this);
         countdownSpeaker.setLanguage(Locale.UK);
-        timer = new MyCountDownTimer(5000, 1000);
         //-- These need to be collected from Preferences
         intermediate = false;
         expert = false;
@@ -49,7 +52,11 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         sets = 3;
         //-- End of preferences
         getExercises();
+        selectedExerciseList = new ArrayList<>();
+        selectedExerciseList = getSet(chosenExerciseList);
         exerciseImageView = (ImageView) findViewById(R.id.exerciseImageView);
+        currentExerciseTextView = (TextView) findViewById(R.id.currentExerciseTextView);
+        nextExerciseTextView = (TextView) findViewById(R.id.nextExerciseTextView);
         setNumberTextView = (TextView) findViewById(R.id.setNumberTextView);
         setNumberTextView.setText(String.valueOf(sets));
         repNumberTextView = (TextView) findViewById(R.id.repNumberTextView);
@@ -81,7 +88,6 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     }
     
     private void getExercises() {
-        Log.d(TAG, "Creating exercise lists ...");
         fullExerciseList = new ArrayList<>();
         chosenExerciseList = new ArrayList<>();
         String[] standard_exercises = getResources().getStringArray(R.array.standard_exercises);
@@ -113,7 +119,17 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 fullExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getResourceId(loop, 0), expert_thumbs.getResourceId(loop, 0), "", 0, false));
             }
         }
-        Log.d(TAG, "Finished creating exercise lists ...");
+    }
+
+    private ArrayList<Exercise> getSet(ArrayList<Exercise> list) {
+        ArrayList<Exercise> set = new ArrayList<>();
+        for (int i = 0; i < reps; i++) {
+            Random e = new Random();
+            int index = e.nextInt(list.size());
+            set.add(list.get(index));
+            list.remove(index);
+        }
+        return set;
     }
 
     @Override
@@ -124,7 +140,10 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_998));
                 instigatePainButton.setEnabled(false);
                 instigatePainButton.setText(R.string.button_inactive);
-                timer.start();
+                exerciseTimer = new MyCountDownTimer(5000, 1000, 5000, 0, "Sprint ... then " + chosenExerciseList.get(0).getName());
+                exerciseTimer.start();
+                currentExerciseTextView.setText("Brace Yourself!");
+                nextExerciseTextView.setText("Hill Sprint");
                 break;
             default:
                 break;
@@ -143,30 +162,107 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         super.onDestroy();
     }
 
+    private void nextExercise() {
+        //-- Let's do this!
+        currentExerciseTextView.setText(nextExerciseTextView.getText());
+        if (currentExerciseTextView.getText().equals("Hill Sprint")) {
+            exerciseTimer = new MyCountDownTimer(10000, 1000, 5000, 0, chosenExerciseList.get(0).getName());
+            exerciseTimer.start();
+            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_997));
+            nextExerciseTextView.setText(chosenExerciseList.get(0).getName());
+            setNumberTextView.setText(String.valueOf(sets));
+            repNumberTextView.setText(String.valueOf(chosenExerciseList.size()));
+        } else if (currentExerciseTextView.getText().equals(chosenExerciseList.get(0).getName())) {
+            exerciseTimer = new MyCountDownTimer(30000, 1000, 5000, MyCountDownTimer.HALFWAY_NOTIFICATION + MyCountDownTimer.SAY_INITIAL_NUMBER_WITH_SECOND, "Recover");
+            exerciseTimer.start();
+            exerciseImageView.setImageDrawable(getResources().getDrawable(chosenExerciseList.get(0).getImage()));
+            chosenExerciseList.remove(0);
+            if (chosenExerciseList.size() > 0) {
+                nextExerciseTextView.setText("Get your breath back!");
+            } else {
+                nextExerciseTextView.setText("You've finished the set.");
+            }
+        } else if (currentExerciseTextView.getText().equals("Get your breath back!")) {
+            exerciseTimer = new MyCountDownTimer(30000, 1000, 5000, MyCountDownTimer.HALFWAY_NOTIFICATION + MyCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
+            exerciseTimer.start();
+            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
+            nextExerciseTextView.setText("Hill Sprint");
+        }
+    }
+
     private class MyCountDownTimer {
+        public static final int SAY_INITIAL_NUMBER = 1;
+        public static final int QUEUE_INITIAL_NUMBER = 2;
+        public static final int SAY_INITIAL_NUMBER_WITH_SECOND = 4;
+        public static final int QUEUE_INITIAL_NUMBER_WITH_SECOND = 8;
+        public static final int HALFWAY_NOTIFICATION = 16;
+
         private long millisInFuture;
         private long countDownInterval;
+        private long countDownStart;
+        private String finish;
+        private long halfwayMillis;
+        private boolean firstTick;
+        private int type;
+        private int queue;
 
-        public MyCountDownTimer(long pMillisInFuture, long pCountDownInterval) {
+        public MyCountDownTimer(long pMillisInFuture, long pCountDownInterval, long pCountDownStart, int pType, String sFinish) {
             this.millisInFuture = pMillisInFuture;
             this.countDownInterval = pCountDownInterval;
+            this.countDownStart = pCountDownStart;
+            this.finish = sFinish;
+            this.type = pType;
+            if ((type & 4) == 4) {
+                this.halfwayMillis = millisInFuture / 2;
+            } else {
+                this.halfwayMillis = millisInFuture + 1000;
+            }
+            Log.v("TimerStatus", "setting halfway to " + halfwayMillis);
+            if ((type & SAY_INITIAL_NUMBER) == 1 || (type & QUEUE_INITIAL_NUMBER) == 2 || (type & SAY_INITIAL_NUMBER_WITH_SECOND) == 4 || (type & QUEUE_INITIAL_NUMBER_WITH_SECOND) == 8) {
+                firstTick = true;
+            } else {
+                firstTick = false;
+            }
         }
 
         public void start() {
             final Handler handler = new Handler();
-            Log.v("status", "starting");
+            Log.v("TimerStatus", "starting");
             final Runnable counter = new Runnable() {
 
                 public void run() {
                     if (millisInFuture <= 0) {
-                        Log.v("status", "done");
-                        countdownSpeaker.speak("Go", TextToSpeech.QUEUE_FLUSH, null);
+                        Log.v("TimerStatus", "done");
+                        countdownSpeaker.speak(finish, TextToSpeech.QUEUE_FLUSH, null);
+                        nextExercise();
                     } else {
                         long sec = millisInFuture / 1000;
-                        Log.v("status", Long.toString(sec) + " seconds remain");
-                        countdownSpeaker.speak(String.valueOf(sec), TextToSpeech.QUEUE_FLUSH, null);
+                        if (millisInFuture <= countDownStart) {
+                            countdownSpeaker.speak(String.valueOf(sec), TextToSpeech.QUEUE_FLUSH, null);
+                        } else if (firstTick == true) {
+                            if ((type & SAY_INITIAL_NUMBER) == SAY_INITIAL_NUMBER ||
+                                    (type & SAY_INITIAL_NUMBER_WITH_SECOND) == SAY_INITIAL_NUMBER_WITH_SECOND) {
+                                queue = TextToSpeech.QUEUE_FLUSH;
+                            } else {
+                                queue = TextToSpeech.QUEUE_ADD;
+                            }
+                            if ((type & SAY_INITIAL_NUMBER) == SAY_INITIAL_NUMBER ||
+                                    (type & SAY_INITIAL_NUMBER_WITH_SECOND) == SAY_INITIAL_NUMBER_WITH_SECOND ||
+                                    (type & QUEUE_INITIAL_NUMBER) == QUEUE_INITIAL_NUMBER ||
+                                    (type & QUEUE_INITIAL_NUMBER_WITH_SECOND) == QUEUE_INITIAL_NUMBER_WITH_SECOND) {
+                                countdownSpeaker.speak(String.valueOf(sec), queue, null);
+                            }
+                            if ((type & SAY_INITIAL_NUMBER_WITH_SECOND) == SAY_INITIAL_NUMBER_WITH_SECOND ||
+                                    (type & QUEUE_INITIAL_NUMBER_WITH_SECOND) == QUEUE_INITIAL_NUMBER_WITH_SECOND) {
+                                countdownSpeaker.speak("seconds", TextToSpeech.QUEUE_ADD, null);
+                            }
+                        }
+                        if (Math.abs(millisInFuture - halfwayMillis) < 100) {
+                            countdownSpeaker.speak("Halfway Point", TextToSpeech.QUEUE_FLUSH, null);
+                        }
                         millisInFuture -= countDownInterval;
                         handler.postDelayed(this, countDownInterval);
+                        firstTick = false;
                     }
                 }
             };
