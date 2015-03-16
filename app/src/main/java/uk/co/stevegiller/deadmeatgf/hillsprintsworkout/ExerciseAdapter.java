@@ -1,6 +1,7 @@
 package uk.co.stevegiller.deadmeatgf.hillsprintsworkout;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
  * Created by Giller_S on 16/03/2015.
  */
 public class ExerciseAdapter extends ArrayAdapter<Exercise> {
+    private static final String TAG = "ExerciseAdapter";
+
     LayoutInflater layoutInflater;
     Context ctx;
 
@@ -47,8 +50,13 @@ public class ExerciseAdapter extends ArrayAdapter<Exercise> {
         }
         holder.exerciseCheckBox.setSelected(exercise.isSelected());
         holder.exerciseTextView.setText(exercise.getName());
-        holder.exerciseImageView.setImageDrawable(exercise.getThumb());
+        holder.exerciseImageView.setImageDrawable(ctx.getResources().getDrawable(exercise.getThumb()));
 
+        if(exercise.isSelected()) {
+            Log.d(TAG, "The exercise " + exercise.getName() + " is selected ...");
+        } else {
+            Log.d(TAG, "The exercise " + exercise.getName() + " is not selected ...");
+        }
         return convertView;
     }
 }

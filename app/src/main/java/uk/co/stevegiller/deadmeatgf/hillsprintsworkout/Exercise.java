@@ -1,6 +1,10 @@
 package uk.co.stevegiller.deadmeatgf.hillsprintsworkout;
 
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
+
+import java.lang.reflect.Array;
 
 /**
  * Created by DeadMeatGF on 14/03/2015.
@@ -8,13 +12,13 @@ import android.graphics.drawable.Drawable;
 public class Exercise {
 
     private String mName;
-    private Drawable mImage;
-    private Drawable mThumb;
+    private int mImage;
+    private int mThumb;
     private String mDescription;
     private int mSequence;
     private boolean mSelected;
 
-    public Exercise(String name, Drawable image, Drawable thumb, String description, int sequence, boolean selected) {
+    public Exercise(String name, int image, int thumb, String description, int sequence, boolean selected) {
         this.mName = name;
         this.mImage = image;
         this.mDescription = description;
@@ -28,19 +32,19 @@ public class Exercise {
         return mName;
     }
 
-    public Drawable getImage() {
+    public int getImage() {
         return mImage;
     }
 
-    public void setImage(Drawable mImage) {
+    public void setImage(int mImage) {
         this.mImage = mImage;
     }
 
-    public Drawable getThumb() {
+    public int getThumb() {
         return mThumb;
     }
 
-    public void setThumb(Drawable thumb) {
+    public void setThumb(int thumb) {
         this.mThumb = thumb;
     }
 
