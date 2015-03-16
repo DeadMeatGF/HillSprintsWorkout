@@ -7,27 +7,96 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".HillSprintActivity">
 
-    <Space
-        android:id="@+id/centrepointSpacer"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
-
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/centrepointSpacer"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <ListView
-        android:id="@+id/listView2"
+    <Button
+        android:id="@+id/instigatePainButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:text="@string/button_go" />
+
+    <TextView
+        android:id="@+id/setNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/centrepointSpacer" />
+        android:layout_alignParentTop="true"
+        android:padding="4dp"
+        android:textIsSelectable="false"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/setLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/setNumberTextView"
+        android:layout_toRightOf="@+id/setNumberTextView"
+        android:padding="4dp"
+        android:text="@string/set_count"
+        android:textIsSelectable="false"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/repNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:padding="4dp"
+        android:textIsSelectable="false"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/repLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/repNumberTextView"
+        android:layout_toStartOf="@+id/repNumberTextView"
+        android:padding="4dp"
+        android:text="@string/rep_count"
+        android:textIsSelectable="false"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/currentExerciseTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/setNumberTextView"
+        android:padding="4dp"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/nextExerciseTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/currentExerciseTextView"
+        android:padding="4dp"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/exerciseImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/instigatePainButton"
+        android:layout_below="@+id/nextExerciseTextView"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/main_image"
+        android:longClickable="false"
+        android:src="@drawable/exercise_999" />
+
 </RelativeLayout>

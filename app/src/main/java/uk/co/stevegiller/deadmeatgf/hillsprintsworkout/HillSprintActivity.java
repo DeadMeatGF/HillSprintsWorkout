@@ -6,39 +6,47 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class HillSprintActivity extends ActionBarActivity {
+public class HillSprintActivity extends ActionBarActivity implements View.OnClickListener {
     public static final String TAG = "HillSprintActivity";
 
-    private ListView allExercisesListView;
-    private ListView chosenExercisesListView;
+    private Button instigatePainButton;
+    private ImageView exerciseImageView;
+    private TextView setNumberTextView;
+    private TextView repNumberTextView;
     
     private ArrayList<Exercise> fullExerciseList;
     private ArrayList<Exercise> chosenExerciseList;
     
     private boolean intermediate;
     private boolean expert;
+    private int sets;
+    private int reps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hill_sprint);
-        allExercisesListView = (ListView) findViewById(R.id.listView);
-        chosenExercisesListView = (ListView) findViewById(R.id.listView2);
         //-- These need to be collected from Preferences
         intermediate = false;
         expert = false;
+        reps = 6;
+        sets = 3;
+        //-- End of preferences
         getExercises();
-        ExerciseAdapter allExercisesAdapter = new ExerciseAdapter(this, R.layout.exercise_row, fullExerciseList);
-        ExerciseAdapter chosenExercisesAdapter = new ExerciseAdapter(this, R.layout.exercise_row, chosenExerciseList);
-        allExercisesListView.setAdapter(allExercisesAdapter);
-        chosenExercisesListView.setAdapter(chosenExercisesAdapter);
-        allExercisesAdapter.notifyDataSetChanged();
-        chosenExercisesAdapter.notifyDataSetChanged();
+        exerciseImageView = (ImageView) findViewById(R.id.exerciseImageView);
+        setNumberTextView = (TextView) findViewById(R.id.setNumberTextView);
+        setNumberTextView.setText(String.valueOf(sets));
+        repNumberTextView = (TextView) findViewById(R.id.repNumberTextView);
+        repNumberTextView.setText(String.valueOf(reps));
+        instigatePainButton = (Button) findViewById(R.id.instigatePainButton);
+        instigatePainButton.setOnClickListener(this);
     }
 
     @Override
@@ -106,5 +114,19 @@ public class HillSprintActivity extends ActionBarActivity {
                 Log.d(TAG, "new Exercise(" + expert_exercises[loop] + ", " + expert_images.getResourceId(loop, 0) + ", " + expert_thumbs.getResourceId(loop, 0) + ", \"\", 0, false)");
             }
         }
-    } 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.instigatePainButton:
+                //-- Brace Yourself!
+                exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_998));
+                instigatePainButton.setEnabled(false);
+                instigatePainButton.setText(R.string.button_inactive);
+                break;
+            default:
+                break;
+        }
+    }
 }
