@@ -1,7 +1,6 @@
 package uk.co.stevegiller.deadmeatgf.hillsprintsworkout;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,18 +26,12 @@ public class ExerciseAdapter extends ArrayAdapter<Exercise> {
         this.ctx = context;
     }
 
-    private class ViewHolder {
-        ImageView exerciseImageView;
-        TextView exerciseTextView;
-        CheckBox exerciseCheckBox;
-    }
-
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         Exercise exercise = getItem(position);
 
         LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(convertView == null) {
+        if (convertView == null) {
             convertView = inflater.inflate(R.layout.exercise_row, null);
             holder = new ViewHolder();
             holder.exerciseCheckBox = (CheckBox) convertView.findViewById(R.id.exerciseCheckBox);
@@ -52,11 +45,12 @@ public class ExerciseAdapter extends ArrayAdapter<Exercise> {
         holder.exerciseTextView.setText(exercise.getName());
         holder.exerciseImageView.setImageDrawable(ctx.getResources().getDrawable(exercise.getThumb()));
 
-        if(exercise.isSelected()) {
-            Log.d(TAG, "The exercise " + exercise.getName() + " is selected ...");
-        } else {
-            Log.d(TAG, "The exercise " + exercise.getName() + " is not selected ...");
-        }
         return convertView;
+    }
+
+    private class ViewHolder {
+        ImageView exerciseImageView;
+        TextView exerciseTextView;
+        CheckBox exerciseCheckBox;
     }
 }
