@@ -228,13 +228,16 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             this.countDownStart = pCountDownStart;
             this.finish = sFinish;
             this.type = pType;
-            if ((type & 4) == 4) {
+            if ((type & HALFWAY_NOTIFICATION) == HALFWAY_NOTIFICATION) {
                 this.halfwayMillis = millisInFuture / 2;
             } else {
                 this.halfwayMillis = millisInFuture + 1000;
             }
             Log.v("TimerStatus", "setting halfway to " + halfwayMillis);
-            if ((type & SAY_INITIAL_NUMBER) == 1 || (type & QUEUE_INITIAL_NUMBER) == 2 || (type & SAY_INITIAL_NUMBER_WITH_SECOND) == 4 || (type & QUEUE_INITIAL_NUMBER_WITH_SECOND) == 8) {
+            if ((type & SAY_INITIAL_NUMBER) == SAY_INITIAL_NUMBER ||
+                    (type & QUEUE_INITIAL_NUMBER) == QUEUE_INITIAL_NUMBER ||
+                    (type & SAY_INITIAL_NUMBER_WITH_SECOND) == SAY_INITIAL_NUMBER_WITH_SECOND ||
+                    (type & QUEUE_INITIAL_NUMBER_WITH_SECOND) == QUEUE_INITIAL_NUMBER_WITH_SECOND) {
                 firstTick = true;
             } else {
                 firstTick = false;
