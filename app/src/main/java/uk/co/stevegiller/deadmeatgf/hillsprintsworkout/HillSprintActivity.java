@@ -172,7 +172,28 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             nextExerciseTextView.setText(chosenExerciseList.get(0).getName());
             setNumberTextView.setText(String.valueOf(sets));
             repNumberTextView.setText(String.valueOf(chosenExerciseList.size()));
+        } else if (currentExerciseTextView.getText().equals("You've completed the set.")) {
+            chosenExerciseList.clear();
+            chosenExerciseList = getSet(selectedExerciseList);
+            exerciseTimer = new ExcerciseCountDownTimer(60000, 1000, 10000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
+            exerciseTimer.start();
+            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
+        } else if (currentExerciseTextView.getText().equals("You've finished!")) {
+            nextExerciseTextView.setText("");
+            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_995));
+        } else if (currentExerciseTextView.getText().equals("Get your breath back!")) {
+            exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
+            exerciseTimer.start();
+            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
+            nextExerciseTextView.setText("Hill Sprint");
+        } else if (currentExerciseTextView.getText().equals("You've completed the set.")) {
+            chosenExerciseList.clear();
+            chosenExerciseList = getSet(selectedExerciseList);
+            exerciseTimer = new ExcerciseCountDownTimer(60000, 1000, 10000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
+            exerciseTimer.start();
+            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
         } else if (currentExerciseTextView.getText().equals(chosenExerciseList.get(0).getName())) {
+            Log.d(TAG, "View showing " + currentExerciseTextView.getText() + " :: Size = " + chosenExerciseList.size());
             if (chosenExerciseList.size() > 1) {
                 nextExerciseTextView.setText("Get your breath back!");
                 exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Recover");
@@ -189,20 +210,6 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             exerciseTimer.start();
             exerciseImageView.setImageDrawable(getResources().getDrawable(chosenExerciseList.get(0).getImage()));
             chosenExerciseList.remove(0);
-        } else if (currentExerciseTextView.getText().equals("Get your breath back!")) {
-            exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
-            exerciseTimer.start();
-            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
-            nextExerciseTextView.setText("Hill Sprint");
-        } else if (currentExerciseTextView.getText().equals("You've completed the set.")) {
-            chosenExerciseList.clear();
-            chosenExerciseList = getSet(selectedExerciseList);
-            exerciseTimer = new ExcerciseCountDownTimer(60000, 1000, 10000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
-            exerciseTimer.start();
-            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
-        } else if (currentExerciseTextView.getText().equals("You've finished!")) {
-            nextExerciseTextView.setText("");
-            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_995));
         }
     }
 
