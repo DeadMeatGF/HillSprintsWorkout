@@ -172,12 +172,6 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             nextExerciseTextView.setText(chosenExerciseList.get(0).getName());
             setNumberTextView.setText(String.valueOf(sets));
             repNumberTextView.setText(String.valueOf(chosenExerciseList.size()));
-        } else if (currentExerciseTextView.getText().equals("You've completed the set.")) {
-            chosenExerciseList.clear();
-            chosenExerciseList = getSet(selectedExerciseList);
-            exerciseTimer = new ExcerciseCountDownTimer(60000, 1000, 10000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
-            exerciseTimer.start();
-            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
         } else if (currentExerciseTextView.getText().equals("You've finished!")) {
             nextExerciseTextView.setText("");
             exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_995));
@@ -188,7 +182,8 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             nextExerciseTextView.setText("Hill Sprint");
         } else if (currentExerciseTextView.getText().equals("You've completed the set.")) {
             chosenExerciseList.clear();
-            chosenExerciseList = getSet(selectedExerciseList);
+            selectedExerciseList = getSet(chosenExerciseList);
+            nextExerciseTextView.setText("Hill Sprints");
             exerciseTimer = new ExcerciseCountDownTimer(60000, 1000, 10000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
             exerciseTimer.start();
             exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
