@@ -11,9 +11,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by Giller_S on 16/03/2015.
- */
 public class ExerciseAdapter extends ArrayAdapter<Exercise> {
     private static final String TAG = "ExerciseAdapter";
 

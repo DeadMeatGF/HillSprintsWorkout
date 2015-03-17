@@ -31,7 +31,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     private ArrayList<Exercise> fullExerciseList;
     private ArrayList<Exercise> chosenExerciseList;
     private ArrayList<Exercise> selectedExerciseList;
-    private MyCountDownTimer exerciseTimer;
+    private ExcerciseCountDownTimer exerciseTimer;
     private TextToSpeech countdownSpeaker;
     
     private boolean intermediate;
@@ -140,7 +140,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_998));
                 instigatePainButton.setEnabled(false);
                 instigatePainButton.setText(R.string.button_inactive);
-                exerciseTimer = new MyCountDownTimer(5000, 1000, 5000, 0, "Sprint ... then " + chosenExerciseList.get(0).getName());
+                exerciseTimer = new ExcerciseCountDownTimer(5000, 1000, 5000, 0, "Sprint ... then " + chosenExerciseList.get(0).getName());
                 exerciseTimer.start();
                 currentExerciseTextView.setText("Brace Yourself!");
                 nextExerciseTextView.setText("Hill Sprint");
@@ -166,31 +166,47 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         //-- Let's do this!
         currentExerciseTextView.setText(nextExerciseTextView.getText());
         if (currentExerciseTextView.getText().equals("Hill Sprint")) {
-            exerciseTimer = new MyCountDownTimer(10000, 1000, 5000, 0, chosenExerciseList.get(0).getName());
+            exerciseTimer = new ExcerciseCountDownTimer(10000, 1000, 5000, 0, chosenExerciseList.get(0).getName());
             exerciseTimer.start();
             exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_997));
             nextExerciseTextView.setText(chosenExerciseList.get(0).getName());
             setNumberTextView.setText(String.valueOf(sets));
             repNumberTextView.setText(String.valueOf(chosenExerciseList.size()));
         } else if (currentExerciseTextView.getText().equals(chosenExerciseList.get(0).getName())) {
-            exerciseTimer = new MyCountDownTimer(30000, 1000, 5000, MyCountDownTimer.HALFWAY_NOTIFICATION + MyCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Recover");
+            if (chosenExerciseList.size() > 1) {
+                nextExerciseTextView.setText("Get your breath back!");
+                exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Recover");
+            } else {
+                if (sets == 1) {
+                    nextExerciseTextView.setText("You've finished!");
+                    exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "It's Over! Take a break!");
+                } else {
+                    nextExerciseTextView.setText("You've completed the set.");
+                    exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Set complete. Have a breather.");
+                    sets--;
+                }
+            }
             exerciseTimer.start();
             exerciseImageView.setImageDrawable(getResources().getDrawable(chosenExerciseList.get(0).getImage()));
             chosenExerciseList.remove(0);
-            if (chosenExerciseList.size() > 0) {
-                nextExerciseTextView.setText("Get your breath back!");
-            } else {
-                nextExerciseTextView.setText("You've finished the set.");
-            }
         } else if (currentExerciseTextView.getText().equals("Get your breath back!")) {
-            exerciseTimer = new MyCountDownTimer(30000, 1000, 5000, MyCountDownTimer.HALFWAY_NOTIFICATION + MyCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
+            exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
             exerciseTimer.start();
             exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
             nextExerciseTextView.setText("Hill Sprint");
+        } else if (currentExerciseTextView.getText().equals("You've completed the set.")) {
+            chosenExerciseList.clear();
+            chosenExerciseList = getSet(selectedExerciseList);
+            exerciseTimer = new ExcerciseCountDownTimer(60000, 1000, 10000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
+            exerciseTimer.start();
+            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
+        } else if (currentExerciseTextView.getText().equals("You've finished!")) {
+            nextExerciseTextView.setText("");
+            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_995));
         }
     }
 
-    private class MyCountDownTimer {
+    private class ExcerciseCountDownTimer {
         public static final int SAY_INITIAL_NUMBER = 1;
         public static final int QUEUE_INITIAL_NUMBER = 2;
         public static final int SAY_INITIAL_NUMBER_WITH_SECOND = 4;
@@ -206,7 +222,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         private int type;
         private int queue;
 
-        public MyCountDownTimer(long pMillisInFuture, long pCountDownInterval, long pCountDownStart, int pType, String sFinish) {
+        public ExcerciseCountDownTimer(long pMillisInFuture, long pCountDownInterval, long pCountDownStart, int pType, String sFinish) {
             this.millisInFuture = pMillisInFuture;
             this.countDownInterval = pCountDownInterval;
             this.countDownStart = pCountDownStart;
