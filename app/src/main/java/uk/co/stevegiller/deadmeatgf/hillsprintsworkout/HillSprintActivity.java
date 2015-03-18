@@ -271,6 +271,8 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
 
     private int nextPhase(int phase) {
         Log.d(TAG, "Entered nextPhase(int phase) ... phase = " + phase);
+        setNumberTextView.setText(currentSet + "/" + totalSets);
+        repNumberTextView.setText(currentRep + "/" + totalReps);
         switch (phase) {
             case NOT_STARTED:
                 Log.d(TAG, "Processing phase for nextPhase().NOT_STARTED");
@@ -289,8 +291,6 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 } else {
                     phase = DO_EXERCISE;
                 }
-                setNumberTextView.setText(currentSet + "/" + totalSets);
-                repNumberTextView.setText(currentRep + "/" + totalReps);
                 break;
             case DO_EXERCISE:
                 Log.d(TAG, "Processing phase for nextPhase().DO_EXERCISE");
