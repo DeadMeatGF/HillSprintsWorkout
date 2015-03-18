@@ -152,7 +152,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.instigatePainButton:
-                currentPhase = nextPhase(currentPhase);
+                Log.d(TAG, "You've clicked the GO button - on your own head be it!");
                 instigatePainButton.setEnabled(false);
                 instigatePainButton.setText(R.string.button_inactive);
                 nextExercise();
@@ -184,8 +184,10 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 break;
             case PRE_EXERCISE:
                 Log.d(TAG, "Processing phase for nextExercise().PRE_EXERCISE");
+                //-- Get Ready!
+                countdownSpeaker.speak("Get Ready!", TextToSpeech.QUEUE_FLUSH, null);
                 //-- 10 second countdown;
-                exerciseTimer = new ExcerciseCountDownTimer(10000, 1000, 5000, 0, "Sprint");
+                exerciseTimer = new ExcerciseCountDownTimer(10000, 1000, 5000, 0, "Sprint . . Then " + chosenExerciseList.get(currentRep - 1).getName());
                 exerciseTimer.start();
                 //-- Set image to "Brace Yourself";
                 exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_998));
@@ -233,7 +235,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             case SHORT_REST:
                 Log.d(TAG, "Processing phase for nextExercise().SHORT_REST");
                 //-- 30 second countdown;
-                exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint");
+                exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint . . Then " + chosenExerciseList.get(currentRep - 1).getName());
                 exerciseTimer.start();
                 //-- Set image to "Take a break";
                 exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
@@ -245,7 +247,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             case LONG_REST:
                 Log.d(TAG, "Processing phase for nextExercise().LONG_REST");
                 //-- 60 second countdown;
-                exerciseTimer = new ExcerciseCountDownTimer(60000, 1000, 10000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint");
+                exerciseTimer = new ExcerciseCountDownTimer(60000, 1000, 10000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint . . Then " + chosenExerciseList.get(currentRep - 1).getName());
                 exerciseTimer.start();
                 //-- Set image to "Take a Break";
                 exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
