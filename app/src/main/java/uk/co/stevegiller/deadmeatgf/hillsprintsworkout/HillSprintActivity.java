@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -156,6 +157,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 instigatePainButton.setEnabled(false);
                 instigatePainButton.setText(R.string.button_inactive);
                 nextExercise();
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 break;
             default:
                 break;
@@ -177,6 +179,8 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     private void nextExercise() {
         Log.d(TAG, "Entered nextExercise() ... currentPhase = " + currentPhase);
         currentPhase = nextPhase(currentPhase);
+        setNumberTextView.setText(currentSet + "/" + totalSets);
+        repNumberTextView.setText(currentRep + "/" + totalReps);
         switch (currentPhase) {
             case NOT_STARTED:
                 Log.d(TAG, "Processing phase for nextExercise().NOT_STARTED");
@@ -187,7 +191,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 //-- Get Ready!
                 countdownSpeaker.speak("Get Ready!", TextToSpeech.QUEUE_FLUSH, null);
                 //-- 10 second countdown;
-                exerciseTimer = new ExcerciseCountDownTimer(10000, 1000, 5000, 0, "Sprint . . Then " + chosenExerciseList.get(currentRep - 1).getName());
+                exerciseTimer = new ExcerciseCountDownTimer(10000, 1000, 5000, 0, "Sprint . . Then " + chosenExerciseList.get(currentRep).getName());
                 exerciseTimer.start();
                 //-- Set image to "Brace Yourself";
                 exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_998));
@@ -264,6 +268,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 currentExerciseTextView.setText("Congratulations");
                 //-- Set Next Exercise Text to "You've finished the workout"
                 nextExerciseTextView.setText("You've finished the workout");
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 break;
             default:
         }
@@ -271,8 +276,6 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
 
     private int nextPhase(int phase) {
         Log.d(TAG, "Entered nextPhase(int phase) ... phase = " + phase);
-        setNumberTextView.setText(currentSet + "/" + totalSets);
-        repNumberTextView.setText(currentRep + "/" + totalReps);
         switch (phase) {
             case NOT_STARTED:
                 Log.d(TAG, "Processing phase for nextPhase().NOT_STARTED");
