@@ -21,23 +21,35 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
 
     public static final String TAG = "HillSprintActivity";
 
+    private static final int NOT_STARTED = 0;
+    private static final int PRE_EXERCISE = 1;
+    private static final int HILL_SPRINT = 2;
+    private static final int DO_EXERCISE = 3;
+    private static final int LAST_EXERCISE = 4;
+    private static final int SHORT_REST = 5;
+    private static final int LONG_REST = 6;
+    private static final int FINISHED = 7;
+
     private Button instigatePainButton;
     private ImageView exerciseImageView;
     private TextView setNumberTextView;
     private TextView repNumberTextView;
     private TextView currentExerciseTextView;
     private TextView nextExerciseTextView;
-    
-    private ArrayList<Exercise> fullExerciseList;
-    private ArrayList<Exercise> chosenExerciseList;
-    private ArrayList<Exercise> selectedExerciseList;
+
+    private ArrayList<Exercise> fullExerciseList;       //-- List of all exercises in the app.
+    private ArrayList<Exercise> chosenExerciseList;     //-- Exercises chosen for the current set.
+    private ArrayList<Exercise> selectedExerciseList;   //-- Exercises selected for inclusion in the current workout.
     private ExcerciseCountDownTimer exerciseTimer;
     private TextToSpeech countdownSpeaker;
     
     private boolean intermediate;
     private boolean expert;
-    private int sets;
-    private int reps;
+    private int totalSets;
+    private int currentSet;
+    private int totalReps;
+    private int currentRep;
+    private int currentPhase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,21 +58,25 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         countdownSpeaker = new TextToSpeech(this, this);
         countdownSpeaker.setLanguage(Locale.UK);
         //-- These need to be collected from Preferences
+
         intermediate = false;
         expert = false;
-        reps = 6;
-        sets = 3;
+        totalReps = 6;
+        totalSets = 3;
         //-- End of preferences
+        currentPhase = NOT_STARTED;
+        currentSet = 0;
+        currentRep = 0;
         getExercises();
-        selectedExerciseList = new ArrayList<>();
-        selectedExerciseList = getSet(chosenExerciseList);
+        chosenExerciseList = new ArrayList<>();
+        chosenExerciseList = getSet(selectedExerciseList);
         exerciseImageView = (ImageView) findViewById(R.id.exerciseImageView);
         currentExerciseTextView = (TextView) findViewById(R.id.currentExerciseTextView);
         nextExerciseTextView = (TextView) findViewById(R.id.nextExerciseTextView);
         setNumberTextView = (TextView) findViewById(R.id.setNumberTextView);
-        setNumberTextView.setText(String.valueOf(sets));
+        setNumberTextView.setText(currentSet + "/" + totalSets);
         repNumberTextView = (TextView) findViewById(R.id.repNumberTextView);
-        repNumberTextView.setText(String.valueOf(reps));
+        repNumberTextView.setText(currentRep + "/" + totalReps);
         instigatePainButton = (Button) findViewById(R.id.instigatePainButton);
         instigatePainButton.setOnClickListener(this);
     }
@@ -89,7 +105,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     
     private void getExercises() {
         fullExerciseList = new ArrayList<>();
-        chosenExerciseList = new ArrayList<>();
+        selectedExerciseList = new ArrayList<>();
         String[] standard_exercises = getResources().getStringArray(R.array.standard_exercises);
         String[] intermediate_exercises = getResources().getStringArray(R.array.intermediate_exercises);
         String[] expert_exercises = getResources().getStringArray(R.array.expert_exercises);
@@ -101,12 +117,12 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         TypedArray expert_thumbs = getResources().obtainTypedArray(R.array.expert_exercise_thumbs);
         for(int loop = 0; loop < standard_exercises.length; loop++) {
             fullExerciseList.add(new Exercise(standard_exercises[loop], standard_images.getResourceId(loop, 0), standard_thumbs.getResourceId(loop, 0), "", 0, true));
-            chosenExerciseList.add(new Exercise(standard_exercises[loop], standard_images.getResourceId(loop, 0), standard_thumbs.getResourceId(loop, 0), "", 0, true));
+            selectedExerciseList.add(new Exercise(standard_exercises[loop], standard_images.getResourceId(loop, 0), standard_thumbs.getResourceId(loop, 0), "", 0, true));
         }
         for (int loop = 0; loop < intermediate_exercises.length; loop++) {
             if(intermediate) {
                 fullExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images.getResourceId(loop, 0), intermediate_thumbs.getResourceId(loop, 0), "", 0, true));
-                chosenExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images.getResourceId(loop, 0), intermediate_thumbs.getResourceId(loop, 0), "", 0, true));
+                selectedExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images.getResourceId(loop, 0), intermediate_thumbs.getResourceId(loop, 0), "", 0, true));
             } else {
                 fullExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images.getResourceId(loop, 0), intermediate_thumbs.getResourceId(loop, 0), "", 0, false));
             }
@@ -114,7 +130,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         for (int loop = 0; loop < expert_exercises.length; loop++) {
             if(expert) {
                 fullExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getResourceId(loop, 0), expert_thumbs.getResourceId(loop, 0), "", 0, true));
-                chosenExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getResourceId(loop, 0), expert_thumbs.getResourceId(loop, 0), "", 0, true));
+                selectedExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getResourceId(loop, 0), expert_thumbs.getResourceId(loop, 0), "", 0, true));
             } else {
                 fullExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getResourceId(loop, 0), expert_thumbs.getResourceId(loop, 0), "", 0, false));
             }
@@ -123,7 +139,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
 
     private ArrayList<Exercise> getSet(ArrayList<Exercise> list) {
         ArrayList<Exercise> set = new ArrayList<>();
-        for (int i = 0; i < reps; i++) {
+        for (int i = 0; i < totalReps; i++) {
             Random e = new Random();
             int index = e.nextInt(list.size());
             set.add(list.get(index));
@@ -136,14 +152,10 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.instigatePainButton:
-                //-- Brace Yourself!
-                exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_998));
+                currentPhase = nextPhase(currentPhase);
                 instigatePainButton.setEnabled(false);
                 instigatePainButton.setText(R.string.button_inactive);
-                exerciseTimer = new ExcerciseCountDownTimer(5000, 1000, 5000, 0, "Sprint ... then " + chosenExerciseList.get(0).getName());
-                exerciseTimer.start();
-                currentExerciseTextView.setText("Brace Yourself!");
-                nextExerciseTextView.setText("Hill Sprint");
+                nextExercise();
                 break;
             default:
                 break;
@@ -163,49 +175,153 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     }
 
     private void nextExercise() {
-        //-- Let's do this!
-        currentExerciseTextView.setText(nextExerciseTextView.getText());
-        if (currentExerciseTextView.getText().equals("Hill Sprint")) {
-            exerciseTimer = new ExcerciseCountDownTimer(10000, 1000, 5000, 0, chosenExerciseList.get(0).getName());
-            exerciseTimer.start();
-            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_997));
-            nextExerciseTextView.setText(chosenExerciseList.get(0).getName());
-            setNumberTextView.setText(String.valueOf(sets));
-            repNumberTextView.setText(String.valueOf(chosenExerciseList.size()));
-        } else if (currentExerciseTextView.getText().equals("You've finished!")) {
-            nextExerciseTextView.setText("");
-            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_995));
-        } else if (currentExerciseTextView.getText().equals("Get your breath back!")) {
-            exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
-            exerciseTimer.start();
-            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
-            nextExerciseTextView.setText("Hill Sprint");
-        } else if (currentExerciseTextView.getText().equals("You've completed the set.")) {
-            chosenExerciseList.clear();
-            selectedExerciseList = getSet(chosenExerciseList);
-            nextExerciseTextView.setText("Hill Sprints");
-            exerciseTimer = new ExcerciseCountDownTimer(60000, 1000, 10000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint ... then " + chosenExerciseList.get(0).getName());
-            exerciseTimer.start();
-            exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
-        } else if (currentExerciseTextView.getText().equals(chosenExerciseList.get(0).getName())) {
-            Log.d(TAG, "View showing " + currentExerciseTextView.getText() + " :: Size = " + chosenExerciseList.size());
-            if (chosenExerciseList.size() > 1) {
-                nextExerciseTextView.setText("Get your breath back!");
+        Log.d(TAG, "Entered nextExercise() ... currentPhase = " + currentPhase);
+        currentPhase = nextPhase(currentPhase);
+        switch (currentPhase) {
+            case NOT_STARTED:
+                Log.d(TAG, "Processing phase for nextExercise().NOT_STARTED");
+                Log.e(TAG, "Something fucked up! You shouldn't ever be able to trigger this");
+                break;
+            case PRE_EXERCISE:
+                Log.d(TAG, "Processing phase for nextExercise().PRE_EXERCISE");
+                //-- 10 second countdown;
+                exerciseTimer = new ExcerciseCountDownTimer(10000, 1000, 5000, 0, "Sprint");
+                exerciseTimer.start();
+                //-- Set image to "Brace Yourself";
+                exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_998));
+                //-- Set Current Exercise Text to "Get Ready"
+                currentExerciseTextView.setText("Get Ready!");
+                //-- Set Next Exercise Text to "Hill Sprint"
+                nextExerciseTextView.setText("Hill Sprint");
+                break;
+            case HILL_SPRINT:
+                Log.d(TAG, "Processing phase for nextExercise().HILL_SPRINT");
+                //-- 10 second countdown;
+                exerciseTimer = new ExcerciseCountDownTimer(10000, 1000, 5000, 0, chosenExerciseList.get(currentRep - 1).getName());
+                exerciseTimer.start();
+                //-- Set image to "Hill Sprint";
+                exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_997));
+                //-- Set Current Exercise Text to "Hill Sprint"
+                currentExerciseTextView.setText("Hill Sprint");
+                //-- Set Next Exercise Text to current exercise name
+                nextExerciseTextView.setText(chosenExerciseList.get(currentRep - 1).getName());
+                break;
+            case DO_EXERCISE:
+                Log.d(TAG, "Processing phase for nextExercise().DO_EXERCISE");
+                //-- 30 second countdown;
                 exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Recover");
-            } else {
-                if (sets == 1) {
-                    nextExerciseTextView.setText("You've finished!");
-                    exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "It's Over! Take a break!");
-                } else {
-                    nextExerciseTextView.setText("You've completed the set.");
-                    exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Set complete. Have a breather.");
-                    sets--;
-                }
-            }
-            exerciseTimer.start();
-            exerciseImageView.setImageDrawable(getResources().getDrawable(chosenExerciseList.get(0).getImage()));
-            chosenExerciseList.remove(0);
+                exerciseTimer.start();
+                //-- Set image to current exercise image;
+                exerciseImageView.setImageDrawable(getResources().getDrawable(chosenExerciseList.get(currentRep - 1).getImage()));
+                //-- Set Current Exercise Text to current exercise name
+                currentExerciseTextView.setText(chosenExerciseList.get(currentRep - 1).getName());
+                //-- Set Next Exercise Text to "Recover"
+                nextExerciseTextView.setText("Recover");
+                break;
+            case LAST_EXERCISE:
+                Log.d(TAG, "Processing phase for nextExercise().LAST_EXERCISE");
+                //-- 30 second countdown;
+                exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "You're Finished!");
+                exerciseTimer.start();
+                //-- Set image to current exercise image;
+                exerciseImageView.setImageDrawable(getResources().getDrawable(chosenExerciseList.get(currentRep - 1).getImage()));
+                //-- Set Current Exercise Text to current exercise name
+                currentExerciseTextView.setText(chosenExerciseList.get(currentRep - 1).getName());
+                //-- Set Next Exercise Text to "Finish"
+                nextExerciseTextView.setText("Finish!");
+                break;
+            case SHORT_REST:
+                Log.d(TAG, "Processing phase for nextExercise().SHORT_REST");
+                //-- 30 second countdown;
+                exerciseTimer = new ExcerciseCountDownTimer(30000, 1000, 5000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint");
+                exerciseTimer.start();
+                //-- Set image to "Take a break";
+                exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
+                //-- Set Current Exercise Text to "Recover"
+                currentExerciseTextView.setText("Recover");
+                //-- Set Next Exercise Text to "Hill Sprint"
+                nextExerciseTextView.setText("Hill Sprint");
+                break;
+            case LONG_REST:
+                Log.d(TAG, "Processing phase for nextExercise().LONG_REST");
+                //-- 60 second countdown;
+                exerciseTimer = new ExcerciseCountDownTimer(60000, 1000, 10000, ExcerciseCountDownTimer.HALFWAY_NOTIFICATION + ExcerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint");
+                exerciseTimer.start();
+                //-- Set image to "Take a Break";
+                exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_996));
+                //-- Set Current Exercise Text to "Take a breather"
+                currentExerciseTextView.setText("Take a Breather");
+                //-- Set Next Exercise Text to "Hill Sprint"
+                nextExerciseTextView.setText("Hill Sprint");
+                break;
+            case FINISHED:
+                Log.d(TAG, "Processing phase for nextExercise().FINISHED");
+                //-- Set image to "It's Over";
+                exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_995));
+                //-- Set Current Exercise Text to "Congratulations"
+                currentExerciseTextView.setText("Congratulations");
+                //-- Set Next Exercise Text to "You've finished the workout"
+                nextExerciseTextView.setText("You've finished the workout");
+                break;
+            default:
         }
+    }
+
+    private int nextPhase(int phase) {
+        Log.d(TAG, "Entered nextPhase(int phase) ... phase = " + phase);
+        switch (phase) {
+            case NOT_STARTED:
+                Log.d(TAG, "Processing phase for nextPhase().NOT_STARTED");
+                phase = PRE_EXERCISE;
+                break;
+            case PRE_EXERCISE:
+                Log.d(TAG, "Processing phase for nextPhase().PRE_EXERCISE");
+                currentRep = 1;
+                currentSet = 1;
+                phase = HILL_SPRINT;
+                break;
+            case HILL_SPRINT:
+                Log.d(TAG, "Processing phase for nextPhase().HILL_SPRINT");
+                if (currentSet == totalSets && currentRep == totalReps) {
+                    phase = LAST_EXERCISE;
+                } else {
+                    phase = DO_EXERCISE;
+                }
+                setNumberTextView.setText(currentSet + "/" + totalSets);
+                repNumberTextView.setText(currentRep + "/" + totalReps);
+                break;
+            case DO_EXERCISE:
+                Log.d(TAG, "Processing phase for nextPhase().DO_EXERCISE");
+                if (currentRep == totalReps) {
+                    phase = LONG_REST;
+                } else {
+                    phase = SHORT_REST;
+                }
+                break;
+            case LAST_EXERCISE:
+                Log.d(TAG, "Processing phase for nextPhase().LAST_EXERCISE");
+                phase = FINISHED;
+                break;
+            case SHORT_REST:
+                Log.d(TAG, "Processing phase for nextPhase().SHORT_REST");
+                phase = HILL_SPRINT;
+                currentRep++;
+                break;
+            case LONG_REST:
+                Log.d(TAG, "Processing phase for nextPhase().LONG_REST");
+                phase = HILL_SPRINT;
+                currentRep = 1;
+                currentSet++;
+                chosenExerciseList.clear();
+                chosenExerciseList = getSet(selectedExerciseList);
+                break;
+            case FINISHED:
+                Log.d(TAG, "Processing phase for nextPhase().FINISHED");
+                phase = NOT_STARTED;
+                break;
+            default:
+        }
+        return phase;
     }
 
     private class ExcerciseCountDownTimer {
