@@ -183,8 +183,8 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         totalSets = Integer.valueOf(settings.getString("prefs_number_of_sets", "3"));
         intermediate = settings.getBoolean("prefs_intermediate_exercises", false);
         expert = settings.getBoolean("prefs_expert_settings", false);
-        setNumberTextView.setText(currentSet + "/" + totalSets);
-        repNumberTextView.setText(currentRep + "/" + totalReps);
+        setNumberTextView.setText((currentSet + 1) + "/" + totalSets);
+        repNumberTextView.setText((currentRep + 1) + "/" + totalReps);
     }
 
     @Override
@@ -197,8 +197,8 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     private void nextExercise() {
         Log.d(TAG, "Entered nextExercise() ... currentPhase = " + currentPhase);
         currentPhase = nextPhase(currentPhase);
-        setNumberTextView.setText(currentSet + "/" + totalSets);
-        repNumberTextView.setText(currentRep + "/" + totalReps);
+        setNumberTextView.setText((currentSet + 1) + "/" + totalSets);
+        repNumberTextView.setText((currentRep + 1) + "/" + totalReps);
         switch (currentPhase) {
             case NOT_STARTED:
                 Log.d(TAG, "Processing phase for nextExercise().NOT_STARTED");
@@ -221,14 +221,14 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             case HILL_SPRINT:
                 Log.d(TAG, "Processing phase for nextExercise().HILL_SPRINT");
                 //-- 10 second countdown;
-                exerciseTimer = new ExerciseCountDownTimer(10000, 1000, 5000, 0, chosenExerciseList.get(currentRep - 1).getName());
+                exerciseTimer = new ExerciseCountDownTimer(10000, 1000, 5000, 0, chosenExerciseList.get(currentRep).getName());
                 exerciseTimer.start();
                 //-- Set image to "Hill Sprint";
                 exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_997));
                 //-- Set Current Exercise Text to "Hill Sprint"
                 currentExerciseTextView.setText("Hill Sprint");
                 //-- Set Next Exercise Text to current exercise name
-                nextExerciseTextView.setText(chosenExerciseList.get(currentRep - 1).getName());
+                nextExerciseTextView.setText(chosenExerciseList.get(currentRep).getName());
                 break;
             case DO_EXERCISE:
                 Log.d(TAG, "Processing phase for nextExercise().DO_EXERCISE");
@@ -236,9 +236,9 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 exerciseTimer = new ExerciseCountDownTimer(30000, 1000, 5000, ExerciseCountDownTimer.HALFWAY_NOTIFICATION + ExerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Recover");
                 exerciseTimer.start();
                 //-- Set image to current exercise image;
-                exerciseImageView.setImageDrawable(getResources().getDrawable(chosenExerciseList.get(currentRep - 1).getImage()));
+                exerciseImageView.setImageDrawable(getResources().getDrawable(chosenExerciseList.get(currentRep).getImage()));
                 //-- Set Current Exercise Text to current exercise name
-                currentExerciseTextView.setText(chosenExerciseList.get(currentRep - 1).getName());
+                currentExerciseTextView.setText(chosenExerciseList.get(currentRep).getName());
                 //-- Set Next Exercise Text to "Recover"
                 nextExerciseTextView.setText("Recover");
                 break;
@@ -248,9 +248,9 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 exerciseTimer = new ExerciseCountDownTimer(30000, 1000, 5000, ExerciseCountDownTimer.HALFWAY_NOTIFICATION + ExerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "You're Finished!");
                 exerciseTimer.start();
                 //-- Set image to current exercise image;
-                exerciseImageView.setImageDrawable(getResources().getDrawable(chosenExerciseList.get(currentRep - 1).getImage()));
+                exerciseImageView.setImageDrawable(getResources().getDrawable(chosenExerciseList.get(currentRep).getImage()));
                 //-- Set Current Exercise Text to current exercise name
-                currentExerciseTextView.setText(chosenExerciseList.get(currentRep - 1).getName());
+                currentExerciseTextView.setText(chosenExerciseList.get(currentRep).getName());
                 //-- Set Next Exercise Text to "Finish"
                 nextExerciseTextView.setText("Finish!");
                 break;
@@ -320,6 +320,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 } else {
                     phase = SHORT_REST;
                 }
+                currentRep++;
                 break;
             case LAST_EXERCISE:
                 Log.d(TAG, "Processing phase for nextPhase().LAST_EXERCISE");
@@ -328,12 +329,11 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             case SHORT_REST:
                 Log.d(TAG, "Processing phase for nextPhase().SHORT_REST");
                 phase = HILL_SPRINT;
-                currentRep++;
                 break;
             case LONG_REST:
                 Log.d(TAG, "Processing phase for nextPhase().LONG_REST");
                 phase = HILL_SPRINT;
-                currentRep = 1;
+                currentRep = 0;
                 currentSet++;
                 chosenExerciseList.clear();
                 chosenExerciseList = getSet(selectedExerciseList);
