@@ -34,19 +34,21 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     private static final int LONG_REST = 6;
     private static final int FINISHED = 7;
 
+    private static final int APP_NOT_BEGUN = 0;
+    private int app_status = APP_NOT_BEGUN;
+    private static final int APP_RUNNING = 1;
+    private static final int APP_PAUSED = 2;
     private Button instigatePainButton;
     private ImageView exerciseImageView;
     private TextView setNumberTextView;
     private TextView repNumberTextView;
     private TextView currentExerciseTextView;
     private TextView nextExerciseTextView;
-
     private ArrayList<Exercise> fullExerciseList;       //-- List of all exercises in the app.
     private ArrayList<Exercise> chosenExerciseList;     //-- Exercises chosen for the current set.
-    private ArrayList<Exercise> selectedExerciseList;   //-- Exercises selected for inclusion in the current workout.
+    private ArrayList<Exercise> availableExerciseList;   //-- Exercises selected for inclusion in the current workout.
     private ExerciseCountDownTimer exerciseTimer;
     private TextToSpeech countdownSpeaker;
-    
     private boolean intermediate;
     private boolean expert;
     private int totalSets;
@@ -61,20 +63,26 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         setContentView(R.layout.activity_hill_sprint);
         countdownSpeaker = new TextToSpeech(this, this);
         countdownSpeaker.setLanguage(Locale.UK);
-        //-- These need to be collected from Preferences
-        //get data from settings activity in this case the language
+        //-- Get Reps, Sets and intermediate/expert options from PreferencesActivity
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         totalReps = Integer.valueOf(settings.getString("prefs_number_of_reps", "6"));
         totalSets = Integer.valueOf(settings.getString("prefs_number_of_sets", "3"));
         intermediate = settings.getBoolean("prefs_intermediate_exercises", false);
-        expert = settings.getBoolean("prefs_expert_settings", false);
+        if (intermediate) {
+            expert = settings.getBoolean("prefs_expert_settings", false);
+        } else {
+            expert = false;
+        }
         //-- End of preferences
         currentPhase = NOT_STARTED;
         currentSet = 0;
         currentRep = 0;
+
         getExercises();
+
         chosenExerciseList = new ArrayList<>();
-        chosenExerciseList = getSet(selectedExerciseList);
+        chosenExerciseList = getSet(availableExerciseList);
+
         exerciseImageView = (ImageView) findViewById(R.id.exerciseImageView);
         currentExerciseTextView = (TextView) findViewById(R.id.currentExerciseTextView);
         nextExerciseTextView = (TextView) findViewById(R.id.nextExerciseTextView);
@@ -112,34 +120,43 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     
     private void getExercises() {
         fullExerciseList = new ArrayList<>();
-        selectedExerciseList = new ArrayList<>();
+        availableExerciseList = new ArrayList<>();
+
         String[] standard_exercises = getResources().getStringArray(R.array.standard_exercises);
         String[] intermediate_exercises = getResources().getStringArray(R.array.intermediate_exercises);
         String[] expert_exercises = getResources().getStringArray(R.array.expert_exercises);
+
         TypedArray standard_images = getResources().obtainTypedArray(R.array.standard_exercise_images);
         TypedArray intermediate_images = getResources().obtainTypedArray(R.array.intermediate_exercise_images);
         TypedArray expert_images = getResources().obtainTypedArray(R.array.expert_exercise_images);
+
         TypedArray standard_thumbs = getResources().obtainTypedArray(R.array.standard_exercise_thumbs);
         TypedArray intermediate_thumbs = getResources().obtainTypedArray(R.array.intermediate_exercise_thumbs);
         TypedArray expert_thumbs = getResources().obtainTypedArray(R.array.expert_exercise_thumbs);
+
         for(int loop = 0; loop < standard_exercises.length; loop++) {
             fullExerciseList.add(new Exercise(standard_exercises[loop], standard_images.getResourceId(loop, 0), standard_thumbs.getResourceId(loop, 0), "", 0, true));
-            selectedExerciseList.add(new Exercise(standard_exercises[loop], standard_images.getResourceId(loop, 0), standard_thumbs.getResourceId(loop, 0), "", 0, true));
+            availableExerciseList.add(new Exercise(standard_exercises[loop], standard_images.getResourceId(loop, 0), standard_thumbs.getResourceId(loop, 0), "", 0, true));
+            Log.d(TAG, "Added " + standard_exercises[loop] + " to all and available exercises");
         }
         for (int loop = 0; loop < intermediate_exercises.length; loop++) {
             if(intermediate) {
                 fullExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images.getResourceId(loop, 0), intermediate_thumbs.getResourceId(loop, 0), "", 0, true));
-                selectedExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images.getResourceId(loop, 0), intermediate_thumbs.getResourceId(loop, 0), "", 0, true));
+                availableExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images.getResourceId(loop, 0), intermediate_thumbs.getResourceId(loop, 0), "", 0, true));
+                Log.d(TAG, "Added " + intermediate_exercises[loop] + " to all and available exercises");
             } else {
                 fullExerciseList.add(new Exercise(intermediate_exercises[loop], intermediate_images.getResourceId(loop, 0), intermediate_thumbs.getResourceId(loop, 0), "", 0, false));
+                Log.d(TAG, "Added " + intermediate_exercises[loop] + " to all exercises");
             }
         }
         for (int loop = 0; loop < expert_exercises.length; loop++) {
             if(expert) {
                 fullExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getResourceId(loop, 0), expert_thumbs.getResourceId(loop, 0), "", 0, true));
-                selectedExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getResourceId(loop, 0), expert_thumbs.getResourceId(loop, 0), "", 0, true));
+                availableExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getResourceId(loop, 0), expert_thumbs.getResourceId(loop, 0), "", 0, true));
+                Log.d(TAG, "Added " + expert_exercises[loop] + " to all and available exercises");
             } else {
                 fullExerciseList.add(new Exercise(expert_exercises[loop], expert_images.getResourceId(loop, 0), expert_thumbs.getResourceId(loop, 0), "", 0, false));
+                Log.d(TAG, "Added " + expert_exercises[loop] + " to all exercises");
             }
         }
     }
@@ -150,6 +167,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             Random e = new Random();
             int index = e.nextInt(list.size());
             set.add(list.get(index));
+            Log.d(TAG, "Added " + list.get(index).getName() + " to chosen exercises");
             list.remove(index);
         }
         return set;
@@ -159,11 +177,12 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.instigatePainButton:
+                app_status = APP_RUNNING;
                 Log.d(TAG, "You've clicked the GO button - on your own head be it!");
                 instigatePainButton.setEnabled(false);
                 instigatePainButton.setText(R.string.button_inactive);
-                nextExercise();
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                nextExercise();
                 break;
             default:
                 break;
@@ -178,13 +197,29 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        totalReps = Integer.valueOf(settings.getString("prefs_number_of_reps", "6"));
-        totalSets = Integer.valueOf(settings.getString("prefs_number_of_sets", "3"));
-        intermediate = settings.getBoolean("prefs_intermediate_exercises", false);
-        expert = settings.getBoolean("prefs_expert_settings", false);
-        setNumberTextView.setText((currentSet + 1) + "/" + totalSets);
-        repNumberTextView.setText((currentRep + 1) + "/" + totalReps);
+        if (app_status != APP_RUNNING) {
+            Log.d(TAG, "Grabbing preferences in onResume()");
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            totalReps = Integer.valueOf(settings.getString("prefs_number_of_reps", "6"));
+            totalSets = Integer.valueOf(settings.getString("prefs_number_of_sets", "3"));
+            intermediate = settings.getBoolean("prefs_intermediate_exercises", false);
+            if (intermediate) {
+                expert = settings.getBoolean("prefs_expert_settings", false);
+            } else {
+                expert = false;
+            }
+
+            getExercises();
+
+            chosenExerciseList = new ArrayList<>();
+            chosenExerciseList = getSet(availableExerciseList);
+
+            setNumberTextView.setText((currentSet) + "/" + totalSets);
+            repNumberTextView.setText((currentRep) + "/" + totalReps);
+        } else {
+            setNumberTextView.setText((currentSet + 1) + "/" + totalSets);
+            repNumberTextView.setText((currentRep + 1) + "/" + totalReps);
+        }
     }
 
     @Override
@@ -195,17 +230,25 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     }
 
     private void nextExercise() {
-        Log.d(TAG, "Entered nextExercise() ... currentPhase = " + currentPhase);
+        Log.d(TAG, "Entered nextExercise() ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
         currentPhase = nextPhase(currentPhase);
-        setNumberTextView.setText((currentSet + 1) + "/" + totalSets);
-        repNumberTextView.setText((currentRep + 1) + "/" + totalReps);
+        if (currentRep == 0) {
+            setNumberTextView.setText((currentSet) + "/" + totalSets);
+        } else {
+            setNumberTextView.setText((currentSet + 1) + "/" + totalSets);
+        }
+        if (currentPhase > LAST_EXERCISE && currentRep != 0) {
+            repNumberTextView.setText(currentRep + "/" + totalReps);
+        } else {
+            repNumberTextView.setText((currentRep + 1) + "/" + totalReps);
+        }
         switch (currentPhase) {
             case NOT_STARTED:
                 Log.d(TAG, "Processing phase for nextExercise().NOT_STARTED");
                 Log.e(TAG, "Something fucked up! You shouldn't ever be able to trigger this");
                 break;
             case PRE_EXERCISE:
-                Log.d(TAG, "Processing phase for nextExercise().PRE_EXERCISE");
+                Log.d(TAG, "Processing phase for nextExercise().PRE_EXERCISE ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 //-- Get Ready!
                 countdownSpeaker.speak("Get Ready!", TextToSpeech.QUEUE_FLUSH, null);
                 //-- 10 second countdown;
@@ -217,9 +260,10 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 currentExerciseTextView.setText("Get Ready!");
                 //-- Set Next Exercise Text to "Hill Sprint"
                 nextExerciseTextView.setText("Hill Sprint");
+                Log.d(TAG, "Exiting phase for nextExercise().PRE_EXERCISE ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 break;
             case HILL_SPRINT:
-                Log.d(TAG, "Processing phase for nextExercise().HILL_SPRINT");
+                Log.d(TAG, "Processing phase for nextExercise().HILL_SPRINT ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 //-- 10 second countdown;
                 exerciseTimer = new ExerciseCountDownTimer(10000, 1000, 5000, 0, chosenExerciseList.get(currentRep).getName());
                 exerciseTimer.start();
@@ -229,9 +273,10 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 currentExerciseTextView.setText("Hill Sprint");
                 //-- Set Next Exercise Text to current exercise name
                 nextExerciseTextView.setText(chosenExerciseList.get(currentRep).getName());
+                Log.d(TAG, "Exiting phase for nextExercise().HILL_SPRINT ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 break;
             case DO_EXERCISE:
-                Log.d(TAG, "Processing phase for nextExercise().DO_EXERCISE");
+                Log.d(TAG, "Processing phase for nextExercise().DO_EXERCISE ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 //-- 30 second countdown;
                 exerciseTimer = new ExerciseCountDownTimer(30000, 1000, 5000, ExerciseCountDownTimer.HALFWAY_NOTIFICATION + ExerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Recover");
                 exerciseTimer.start();
@@ -241,9 +286,10 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 currentExerciseTextView.setText(chosenExerciseList.get(currentRep).getName());
                 //-- Set Next Exercise Text to "Recover"
                 nextExerciseTextView.setText("Recover");
+                Log.d(TAG, "Exiting phase for nextExercise().DO_EXERCISE ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 break;
             case LAST_EXERCISE:
-                Log.d(TAG, "Processing phase for nextExercise().LAST_EXERCISE");
+                Log.d(TAG, "Processing phase for nextExercise().LAST_EXERCISE ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 //-- 30 second countdown;
                 exerciseTimer = new ExerciseCountDownTimer(30000, 1000, 5000, ExerciseCountDownTimer.HALFWAY_NOTIFICATION + ExerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "You're Finished!");
                 exerciseTimer.start();
@@ -253,9 +299,10 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 currentExerciseTextView.setText(chosenExerciseList.get(currentRep).getName());
                 //-- Set Next Exercise Text to "Finish"
                 nextExerciseTextView.setText("Finish!");
+                Log.d(TAG, "Exiting phase for nextExercise().LAST_EXERCISE ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 break;
             case SHORT_REST:
-                Log.d(TAG, "Processing phase for nextExercise().SHORT_REST");
+                Log.d(TAG, "Processing phase for nextExercise().SHORT_REST ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 //-- 30 second countdown;
                 exerciseTimer = new ExerciseCountDownTimer(30000, 1000, 5000, ExerciseCountDownTimer.HALFWAY_NOTIFICATION + ExerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint . . Then " + chosenExerciseList.get(currentRep).getName());
                 exerciseTimer.start();
@@ -265,9 +312,10 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 currentExerciseTextView.setText("Recover");
                 //-- Set Next Exercise Text to "Hill Sprint"
                 nextExerciseTextView.setText("Hill Sprint");
+                Log.d(TAG, "Exiting phase for nextExercise().SHORT_REST ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 break;
             case LONG_REST:
-                Log.d(TAG, "Processing phase for nextExercise().LONG_REST");
+                Log.d(TAG, "Processing phase for nextExercise().LONG_REST ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 //-- 60 second countdown;
                 exerciseTimer = new ExerciseCountDownTimer(60000, 1000, 10000, ExerciseCountDownTimer.HALFWAY_NOTIFICATION + ExerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint . . Then " + chosenExerciseList.get(currentRep).getName());
                 exerciseTimer.start();
@@ -277,9 +325,10 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 currentExerciseTextView.setText("Take a Breather");
                 //-- Set Next Exercise Text to "Hill Sprint"
                 nextExerciseTextView.setText("Hill Sprint");
+                Log.d(TAG, "Exiting phase for nextExercise().LONG_REST ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 break;
             case FINISHED:
-                Log.d(TAG, "Processing phase for nextExercise().FINISHED");
+                Log.d(TAG, "Processing phase for nextExercise().FINISHED ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 //-- Set image to "It's Over";
                 exerciseImageView.setImageDrawable(getResources().getDrawable(R.drawable.exercise_995));
                 //-- Set Current Exercise Text to "Congratulations"
@@ -287,63 +336,66 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 //-- Set Next Exercise Text to "You've finished the workout"
                 nextExerciseTextView.setText("You've finished the workout");
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                Log.d(TAG, "Exiting phase for nextExercise().FINISHED ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 break;
             default:
         }
+        Log.d(TAG, "Exiting nextExercise() ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
     }
 
     private int nextPhase(int phase) {
-        Log.d(TAG, "Entered nextPhase(int phase) ... phase = " + phase);
+        Log.d(TAG, "Entered nextPhase(int phase) ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
         switch (phase) {
             case NOT_STARTED:
-                Log.d(TAG, "Processing phase for nextPhase().NOT_STARTED");
+                Log.d(TAG, "Processing phase for nextPhase().NOT_STARTED ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 phase = PRE_EXERCISE;
                 break;
             case PRE_EXERCISE:
-                Log.d(TAG, "Processing phase for nextPhase().PRE_EXERCISE");
-                currentRep = 1;
-                currentSet = 1;
+                Log.d(TAG, "Processing phase for nextPhase().PRE_EXERCISE ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
+                currentRep = 0;
+                currentSet = 0;
                 phase = HILL_SPRINT;
                 break;
             case HILL_SPRINT:
-                Log.d(TAG, "Processing phase for nextPhase().HILL_SPRINT");
-                if (currentSet == totalSets && currentRep == totalReps) {
+                Log.d(TAG, "Processing phase for nextPhase().HILL_SPRINT ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
+                if ((currentSet + 1) == totalSets && (currentRep + 1) == totalReps) {
                     phase = LAST_EXERCISE;
                 } else {
                     phase = DO_EXERCISE;
                 }
                 break;
             case DO_EXERCISE:
-                Log.d(TAG, "Processing phase for nextPhase().DO_EXERCISE");
+                Log.d(TAG, "Processing phase for nextPhase().DO_EXERCISE ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
+                currentRep++;
                 if (currentRep == totalReps) {
+                    currentRep = 0;
+                    currentSet++;
+                    chosenExerciseList.clear();
+                    chosenExerciseList = getSet(availableExerciseList);
                     phase = LONG_REST;
                 } else {
                     phase = SHORT_REST;
                 }
-                currentRep++;
                 break;
             case LAST_EXERCISE:
-                Log.d(TAG, "Processing phase for nextPhase().LAST_EXERCISE");
+                Log.d(TAG, "Processing phase for nextPhase().LAST_EXERCISE ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 phase = FINISHED;
                 break;
             case SHORT_REST:
-                Log.d(TAG, "Processing phase for nextPhase().SHORT_REST");
+                Log.d(TAG, "Processing phase for nextPhase().SHORT_REST ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 phase = HILL_SPRINT;
                 break;
             case LONG_REST:
-                Log.d(TAG, "Processing phase for nextPhase().LONG_REST");
+                Log.d(TAG, "Processing phase for nextPhase().LONG_REST ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 phase = HILL_SPRINT;
-                currentRep = 0;
-                currentSet++;
-                chosenExerciseList.clear();
-                chosenExerciseList = getSet(selectedExerciseList);
                 break;
             case FINISHED:
-                Log.d(TAG, "Processing phase for nextPhase().FINISHED");
+                Log.d(TAG, "Processing phase for nextPhase().FINISHED ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 phase = NOT_STARTED;
                 break;
             default:
         }
+        Log.d(TAG, "Exiting nextPhase(int phase) ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
         return phase;
     }
 
