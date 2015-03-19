@@ -1,0 +1,83 @@
+<resources>
+    <string name="title_activity_sprint_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_connections">Enable social connections</string>
+    <string name="pref_description_social_connections">Enable posting to social media accounts</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_social_option_titles">
+        <item>Twitter</item>
+        <item>Facebook</item>
+        <item>Path</item>
+    </string-array>
+    <string-array name="pref_social_option_values">
+        <item>3</item>
+        <item>2</item>
+        <item>1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_exercise_settings">Exercise Settings</string>
+
+    <string name="prefs_title_number_of_sets">Number of Sets</string>
+    <string-array name="prefs_number_of_sets_titles">
+        <item>Five</item>
+        <item>Four</item>
+        <item>Three</item>
+        <item>Two</item>
+        <item>One</item>
+    </string-array>
+    <string-array name="prefs_number_of_sets_values">
+        <item>5</item>
+        <item>4</item>
+        <item>3</item>
+        <item>2</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="prefs_title_number_of_reps">Number of Reps</string>
+    <string-array name="prefs_number_of_reps_titles">
+        <item>Nine</item>
+        <item>Eight</item>
+        <item>Seven</item>
+        <item>Six</item>
+        <item>Five</item>
+        <item>Four</item>
+        <item>Three</item>
+        <item>Two</item>
+        <item>One</item>
+    </string-array>
+    <string-array name="prefs_number_of_reps_values">
+        <item>9</item>
+        <item>8</item>
+        <item>7</item>
+        <item>6</item>
+        <item>5</item>
+        <item>4</item>
+        <item>3</item>
+        <item>2</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="prefs_title_intermediate_exercises">Intermediate Exercises</string>
+    <string name="prefs_description_intermediate_exercises">Add the intermediate level to the available exercises</string>
+    <string name="prefs_title_expert_exercises">Expert Exercises</string>
+    <string name="prefs_description_expert_exercises">Add the expert level to the available exercises</string>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+</resources>

@@ -1,0 +1,37 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <ListPreference
+        android:defaultValue="3"
+        android:entries="@array/prefs_number_of_sets_titles"
+        android:entryValues="@array/prefs_number_of_sets_values"
+        android:key="prefs_number_of_sets"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/prefs_title_number_of_sets" />
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <ListPreference
+        android:defaultValue="6"
+        android:entries="@array/prefs_number_of_reps_titles"
+        android:entryValues="@array/prefs_number_of_reps_values"
+        android:key="prefs_number_of_reps"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/prefs_title_number_of_reps" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="prefs_intermediate_exercises"
+        android:summary="@string/prefs_description_intermediate_exercises"
+        android:title="@string/prefs_title_intermediate_exercises" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="prefs_expert_exercises"
+        android:summary="@string/prefs_description_expert_exercises"
+        android:title="@string/prefs_title_expert_exercises" />
+
+</PreferenceScreen>
