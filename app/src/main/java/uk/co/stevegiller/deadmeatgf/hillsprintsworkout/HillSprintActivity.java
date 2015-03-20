@@ -232,15 +232,15 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     private void nextExercise() {
         Log.d(TAG, "Entered nextExercise() ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
         currentPhase = nextPhase(currentPhase);
-        if (currentRep == 0) {
+        if (currentPhase == PRE_EXERCISE) {
             setNumberTextView.setText((currentSet) + "/" + totalSets);
-        } else {
-            setNumberTextView.setText((currentSet + 1) + "/" + totalSets);
-        }
-        if (currentPhase > LAST_EXERCISE && currentRep != 0) {
             repNumberTextView.setText(currentRep + "/" + totalReps);
+        } else if (currentPhase == LAST_EXERCISE) {
+            setNumberTextView.setText("Completed");
+            repNumberTextView.setText("Completed");
         } else {
             repNumberTextView.setText((currentRep + 1) + "/" + totalReps);
+            setNumberTextView.setText((currentSet + 1) + "/" + totalSets);
         }
         switch (currentPhase) {
             case NOT_STARTED:
@@ -351,12 +351,12 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         switch (phase) {
             case NOT_STARTED:
                 Log.d(TAG, "Processing phase for nextPhase().NOT_STARTED ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
+                currentRep = 0;
+                currentSet = 0;
                 phase = PRE_EXERCISE;
                 break;
             case PRE_EXERCISE:
                 Log.d(TAG, "Processing phase for nextPhase().PRE_EXERCISE ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
-                currentRep = 0;
-                currentSet = 0;
                 phase = HILL_SPRINT;
                 break;
             case HILL_SPRINT:
