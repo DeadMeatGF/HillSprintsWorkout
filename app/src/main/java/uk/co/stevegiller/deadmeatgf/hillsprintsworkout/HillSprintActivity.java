@@ -303,6 +303,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 break;
             case SHORT_REST:
                 Log.d(TAG, "Processing phase for nextExercise().SHORT_REST ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
+                currentRep++;
                 //-- 30 second countdown;
                 exerciseTimer = new ExerciseCountDownTimer(30000, 1000, 5000, ExerciseCountDownTimer.HALFWAY_NOTIFICATION + ExerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint . . Then " + chosenExerciseList.get(currentRep).getName());
                 exerciseTimer.start();
@@ -316,6 +317,8 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 break;
             case LONG_REST:
                 Log.d(TAG, "Processing phase for nextExercise().LONG_REST ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
+                currentRep = 0;
+                currentSet++;
                 //-- 60 second countdown;
                 exerciseTimer = new ExerciseCountDownTimer(60000, 1000, 10000, ExerciseCountDownTimer.HALFWAY_NOTIFICATION + ExerciseCountDownTimer.QUEUE_INITIAL_NUMBER_WITH_SECOND, "Sprint . . Then " + chosenExerciseList.get(currentRep).getName());
                 exerciseTimer.start();
@@ -366,12 +369,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 break;
             case DO_EXERCISE:
                 Log.d(TAG, "Processing phase for nextPhase().DO_EXERCISE ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
-                currentRep++;
-                if (currentRep == totalReps) {
-                    currentRep = 0;
-                    currentSet++;
-                    chosenExerciseList.clear();
-                    chosenExerciseList = getSet(availableExerciseList);
+                if ((currentRep + 1) == totalReps) {
                     phase = LONG_REST;
                 } else {
                     phase = SHORT_REST;
