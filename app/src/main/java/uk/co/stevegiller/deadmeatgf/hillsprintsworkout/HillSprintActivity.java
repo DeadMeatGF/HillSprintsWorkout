@@ -29,9 +29,9 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     private static final int PRE_EXERCISE = 1;
     private static final int HILL_SPRINT = 2;
     private static final int DO_EXERCISE = 3;
-    private static final int LAST_EXERCISE = 4;
-    private static final int SHORT_REST = 5;
-    private static final int LONG_REST = 6;
+    private static final int SHORT_REST = 4;
+    private static final int LONG_REST = 5;
+    private static final int LAST_EXERCISE = 6;
     private static final int FINISHED = 7;
 
     private static final int APP_NOT_BEGUN = 0;
@@ -235,7 +235,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         if (currentPhase == PRE_EXERCISE) {
             setNumberTextView.setText((currentSet) + "/" + totalSets);
             repNumberTextView.setText(currentRep + "/" + totalReps);
-        } else if (currentPhase == LAST_EXERCISE) {
+        } else if (currentPhase > LAST_EXERCISE) {
             setNumberTextView.setText("Completed");
             repNumberTextView.setText("Completed");
         } else {
@@ -340,6 +340,8 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 nextExerciseTextView.setText("You've finished the workout");
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 Log.d(TAG, "Exiting phase for nextExercise().FINISHED ... currentPhase = " + currentPhase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
+                instigatePainButton.setEnabled(true);
+                instigatePainButton.setText(R.string.button_go);
                 break;
             default:
         }
