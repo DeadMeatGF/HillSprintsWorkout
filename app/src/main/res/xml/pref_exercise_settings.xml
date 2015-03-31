@@ -34,4 +34,10 @@
         android:key="prefs_expert_exercises"
         android:summary="@string/prefs_description_expert_exercises"
         android:title="@string/prefs_title_expert_exercises" />
+
+    <uk.co.stevegiller.deadmeatgf.hillsprintsworkout.DurationPickerPreference
+        android:defaultValue="30"
+        android:key="prefs_rep_length"
+        android:summary="@string/prefs_description_rep_length"
+        android:title="@string/prefs_title_rep_length" />
 </PreferenceScreen>
