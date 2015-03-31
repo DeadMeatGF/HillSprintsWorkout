@@ -1,5 +1,6 @@
 package uk.co.stevegiller.deadmeatgf.hillsprintsworkout;
 
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 
 /**
@@ -26,7 +28,7 @@ import android.view.MenuItem;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SprintSettingsActivity extends PreferenceActivity {
-
+    private static final String TAG = "PreferenceActivity";
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -35,7 +37,7 @@ public class SprintSettingsActivity extends PreferenceActivity {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
-
+            Log.d(TAG, "A value has been updated to " + stringValue);
             if (preference instanceof ListPreference) {
                 // For list preferences, look up the correct display value in
                 // the preference's 'entries' list.
@@ -48,6 +50,12 @@ public class SprintSettingsActivity extends PreferenceActivity {
                                 ? listPreference.getEntries()[index]
                                 : null);
 
+            } else if (preference instanceof DurationPickerPreference) {
+                Log.d(TAG, "A duration has been changed to " + stringValue);
+                preference.setTitle(preference.getTitle() + ": " + stringValue);
+            } else if (preference instanceof RepeatPickerPreference) {
+                Log.d(TAG, "A repetition has been changed " + stringValue);
+                preference.setTitle(preference.getTitle() + ": " + stringValue);
             } else if (preference instanceof RingtonePreference) {
                 // For ringtone preferences, look up the correct display value
                 // using RingtoneManager.
@@ -78,6 +86,7 @@ public class SprintSettingsActivity extends PreferenceActivity {
             return true;
         }
     };
+    private SharedPreferences sPrefs;
 
     /**
      * Binds a preference's summary to its value. More specifically, when the
@@ -94,10 +103,13 @@ public class SprintSettingsActivity extends PreferenceActivity {
 
         // Trigger the listener immediately with the preference's
         // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+        if (preference instanceof DurationPickerPreference) {
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getInt(preference.getKey(), DurationPickerPreference.DEFAULT_VALUE));
+        } else if (preference instanceof RepeatPickerPreference) {
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getInt(preference.getKey(), RepeatPickerPreference.DEFAULT_VALUE));
+        } else {
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
+        }
     }
 
     @Override
@@ -162,6 +174,7 @@ public class SprintSettingsActivity extends PreferenceActivity {
         bindPreferenceSummaryToValue(findPreference("prefs_number_of_sets"));
         bindPreferenceSummaryToValue(findPreference("prefs_number_of_reps"));
         bindPreferenceSummaryToValue(findPreference("prefs_rep_length"));
+        bindPreferenceSummaryToValue(findPreference("prefs_rep_rest"));
+        bindPreferenceSummaryToValue(findPreference("prefs_set_rest"));
     }
-
 }

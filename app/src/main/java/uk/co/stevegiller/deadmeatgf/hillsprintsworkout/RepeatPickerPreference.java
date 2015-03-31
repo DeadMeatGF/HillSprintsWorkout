@@ -15,9 +15,9 @@ import android.widget.NumberPicker;
  */
 public class RepeatPickerPreference extends DialogPreference {
 
+    public static int DEFAULT_VALUE;
     private int year;
     private NumberPicker semPick;
-    private int DEFAULT_VALUE;
 
     public RepeatPickerPreference(Context context, AttributeSet attrs) {
         super(context, attrs);

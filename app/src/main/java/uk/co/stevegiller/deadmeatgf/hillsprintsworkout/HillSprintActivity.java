@@ -68,8 +68,8 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         countdownSpeaker.setLanguage(Locale.UK);
         //-- Get Reps, Sets and intermediate/expert options from PreferencesActivity
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        totalReps = Integer.valueOf(settings.getString("prefs_number_of_reps", "6"));
-        totalSets = Integer.valueOf(settings.getString("prefs_number_of_sets", "3"));
+        totalReps = settings.getInt("prefs_number_of_reps", 6);
+        totalSets = settings.getInt("prefs_number_of_sets", 3);
         intermediate = settings.getBoolean("prefs_intermediate_exercises", false);
         if (intermediate) {
             expert = settings.getBoolean("prefs_expert_settings", false);
@@ -206,14 +206,17 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         if (app_status != APP_RUNNING) {
             Log.d(TAG, "Grabbing preferences in onResume()");
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-            totalReps = Integer.valueOf(settings.getString("prefs_number_of_reps", "6"));
-            totalSets = Integer.valueOf(settings.getString("prefs_number_of_sets", "3"));
+            totalReps = settings.getInt("prefs_number_of_reps", 6);
+            totalSets = settings.getInt("prefs_number_of_sets", 3);
             intermediate = settings.getBoolean("prefs_intermediate_exercises", false);
             if (intermediate) {
                 expert = settings.getBoolean("prefs_expert_settings", false);
             } else {
                 expert = false;
             }
+            setRestLength = settings.getInt("prefs_long_rest_length", 60);
+            repRestLength = settings.getInt("prefs_short_rest_length", 30);
+            repLength = settings.getInt("prefs_rep_length", 30);
 
             getExercises();
 
