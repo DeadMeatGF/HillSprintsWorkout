@@ -84,4 +84,9 @@
     <string name="prefs_description_rep_length">Time to perform each exercise (seconds)</string>
     <string name="prefs_title_rep_length">Rep Length</string>
 
+    <string name="prefs_description_rep_rest">Rest between each exercise (seconds)</string>
+    <string name="prefs_title_rep_rest">Rep Rest</string>
+
+    <string name="prefs_description_set_rest">Rest between each group of exercises (seconds)</string>
+    <string name="prefs_title_set_rest">Set Rest</string>
 </resources>

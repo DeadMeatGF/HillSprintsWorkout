@@ -161,6 +161,7 @@ public class SprintSettingsActivity extends PreferenceActivity {
         bindPreferenceSummaryToValue(findPreference("notifications_sprint_schedule_ringtone"));
         bindPreferenceSummaryToValue(findPreference("prefs_number_of_sets"));
         bindPreferenceSummaryToValue(findPreference("prefs_number_of_reps"));
+        bindPreferenceSummaryToValue(findPreference("prefs_rep_length"));
     }
 
 }

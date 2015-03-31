@@ -40,4 +40,17 @@
         android:key="prefs_rep_length"
         android:summary="@string/prefs_description_rep_length"
         android:title="@string/prefs_title_rep_length" />
+
+    <uk.co.stevegiller.deadmeatgf.hillsprintsworkout.DurationPickerPreference
+        android:defaultValue="30"
+        android:key="prefs_rep_rest"
+        android:summary="@string/prefs_description_rep_rest"
+        android:title="@string/prefs_title_rep_rest" />
+
+    <uk.co.stevegiller.deadmeatgf.hillsprintsworkout.DurationPickerPreference
+        android:defaultValue="60"
+        android:key="prefs_set_rest"
+        android:summary="@string/prefs_description_set_rest"
+        android:title="@string/prefs_title_set_rest" />
+
 </PreferenceScreen>
