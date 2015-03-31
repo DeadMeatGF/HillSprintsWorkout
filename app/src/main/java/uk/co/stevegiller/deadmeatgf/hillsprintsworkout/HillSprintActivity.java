@@ -77,8 +77,8 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             expert = false;
         }
         setRestLength = Integer.valueOf(settings.getString("prefs_long_rest_length", "60"));
-        repRestLength = Integer.valueOf(settings.getString("prefs_long_rest_length", "30"));
-        repLength = Integer.valueOf(settings.getString("prefs_long_rest_length", "30"));
+        repRestLength = Integer.valueOf(settings.getString("prefs_short_rest_length", "30"));
+        repLength = Integer.valueOf(settings.getString("prefs_rep_length", "30"));
         //-- End of preferences
         currentPhase = NOT_STARTED;
         currentSet = 0;

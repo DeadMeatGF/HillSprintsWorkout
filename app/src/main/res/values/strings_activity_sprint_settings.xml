@@ -80,4 +80,8 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <string name="prefs_description_rep_length">Rep Length</string>
+    <string name="prefs_title_rep_length">Time to perform each exercise (seconds)</string>
+
 </resources>

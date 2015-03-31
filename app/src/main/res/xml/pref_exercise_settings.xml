@@ -34,5 +34,4 @@
         android:key="prefs_expert_exercises"
         android:summary="@string/prefs_description_expert_exercises"
         android:title="@string/prefs_title_expert_exercises" />
-
 </PreferenceScreen>
