@@ -36,6 +36,7 @@ public class DurationPickerPreference extends DialogPreference {
 
         if (positiveResult) {
             persistInt(semPick.getValue());
+            callChangeListener(semPick.getValue());
         }
     }
 

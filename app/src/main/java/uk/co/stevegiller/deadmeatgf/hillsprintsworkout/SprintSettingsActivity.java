@@ -1,6 +1,5 @@
 package uk.co.stevegiller.deadmeatgf.hillsprintsworkout;
 
-import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -37,8 +36,8 @@ public class SprintSettingsActivity extends PreferenceActivity {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
-            Log.d(TAG, "A value has been updated to " + stringValue);
             if (preference instanceof ListPreference) {
+                Log.d(TAG, "A ListPreference has been updated to " + stringValue);
                 // For list preferences, look up the correct display value in
                 // the preference's 'entries' list.
                 ListPreference listPreference = (ListPreference) preference;
@@ -50,13 +49,15 @@ public class SprintSettingsActivity extends PreferenceActivity {
                                 ? listPreference.getEntries()[index]
                                 : null);
 
-            } else if (preference instanceof DurationPickerPreference) {
-                Log.d(TAG, "A duration has been changed to " + stringValue);
-                preference.setTitle(preference.getTitle() + ": " + stringValue);
-            } else if (preference instanceof RepeatPickerPreference) {
-                Log.d(TAG, "A repetition has been changed " + stringValue);
-                preference.setTitle(preference.getTitle() + ": " + stringValue);
+            } else if (preference instanceof DurationPickerPreference || preference instanceof RepeatPickerPreference) {
+                Log.d(TAG, "A Picker has been changed to " + stringValue);
+                if (preference.getTitle().toString().lastIndexOf(":") == -1) {
+                    preference.setTitle(preference.getTitle() + ": " + stringValue);
+                } else {
+                    preference.setTitle(preference.getTitle().toString().substring(0, preference.getTitle().toString().lastIndexOf(":")) + ": " + stringValue);
+                }
             } else if (preference instanceof RingtonePreference) {
+                Log.d(TAG, "A RingtonePreference has been updated to " + stringValue);
                 // For ringtone preferences, look up the correct display value
                 // using RingtoneManager.
                 if (TextUtils.isEmpty(stringValue)) {
@@ -79,6 +80,7 @@ public class SprintSettingsActivity extends PreferenceActivity {
                 }
 
             } else {
+                Log.d(TAG, "A Preference has been updated to " + stringValue);
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
                 preference.setSummary(stringValue);
@@ -86,7 +88,6 @@ public class SprintSettingsActivity extends PreferenceActivity {
             return true;
         }
     };
-    private SharedPreferences sPrefs;
 
     /**
      * Binds a preference's summary to its value. More specifically, when the
@@ -104,10 +105,13 @@ public class SprintSettingsActivity extends PreferenceActivity {
         // Trigger the listener immediately with the preference's
         // current value.
         if (preference instanceof DurationPickerPreference) {
+            Log.d(TAG, "Binding listener to DurationPicker " + preference.toString());
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getInt(preference.getKey(), DurationPickerPreference.DEFAULT_VALUE));
         } else if (preference instanceof RepeatPickerPreference) {
+            Log.d(TAG, "Binding listener to RepeatPicker " + preference.toString());
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getInt(preference.getKey(), RepeatPickerPreference.DEFAULT_VALUE));
         } else {
+            Log.d(TAG, "Binding listener to " + preference.toString());
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
         }
     }
