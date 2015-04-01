@@ -166,15 +166,15 @@ public class SprintSettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.pref_exercise_settings);
 
         // Add 'notifications' preferences, and a corresponding header.
-        fakeHeader = new PreferenceCategory(this);
-        fakeHeader.setTitle(R.string.pref_header_notifications);
-        getPreferenceScreen().addPreference(fakeHeader);
+//        fakeHeader = new PreferenceCategory(this);
+//        fakeHeader.setTitle(R.string.pref_header_notifications);
+//        getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_notification);
 
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences to
         // their values. When their values change, their summaries are updated
         // to reflect the new value, per the Android Design guidelines.
-        bindPreferenceSummaryToValue(findPreference("notifications_sprint_schedule_ringtone"));
+//        bindPreferenceSummaryToValue(findPreference("notifications_sprint_schedule_ringtone"));
         bindPreferenceSummaryToValue(findPreference("prefs_number_of_sets"));
         bindPreferenceSummaryToValue(findPreference("prefs_number_of_reps"));
         bindPreferenceSummaryToValue(findPreference("prefs_rep_length"));
