@@ -9,8 +9,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".HillSprintActivity"
-            android:label="@string/app_name">
-            <intent-filter>
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -19,8 +20,9 @@
         <activity
             android:name=".SprintSettingsActivity"
             android:label="@string/title_activity_sprint_settings"
-            android:parentActivityName=".HillSprintActivity">
-            <meta-data
+            android:parentActivityName=".HillSprintActivity"
+            android:screenOrientation="portrait">
+        <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.stevegiller.deadmeatgf.hillsprintsworkout.HillSprintActivity" />
         </activity>
