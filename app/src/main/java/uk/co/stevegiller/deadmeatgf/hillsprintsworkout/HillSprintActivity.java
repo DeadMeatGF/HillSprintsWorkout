@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.ActionBarActivity;
@@ -35,9 +36,9 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     private static final int FINISHED = 7;
 
     private static final int APP_NOT_BEGUN = 0;
-    private int app_status = APP_NOT_BEGUN;
     private static final int APP_RUNNING = 1;
     private static final int APP_PAUSED = 2;
+    private int app_status = APP_NOT_BEGUN;
     private Button instigatePainButton;
     private ImageView exerciseImageView;
     private TextView setNumberTextView;
@@ -170,7 +171,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
     private ArrayList<Exercise> getSet(ArrayList<Exercise> list) {
         ArrayList<Exercise> set = new ArrayList<>();
         for (int i = 0; i < totalReps; i++) {
-            Random e = new Random();
+            Random e = new Random(SystemClock.elapsedRealtime());
             int index = e.nextInt(list.size());
             set.add(list.get(index));
             Log.d(TAG, "Added " + list.get(index).getName() + " to chosen exercises");
@@ -382,6 +383,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                 Log.d(TAG, "Processing phase for nextPhase().DO_EXERCISE ... phase = " + phase + "|currentRep = " + currentRep + "/" + totalReps + "|currentSet = " + currentSet + "/" + totalSets);
                 if ((currentRep + 1) == totalReps) {
                     phase = LONG_REST;
+                    chosenExerciseList = getSet(availableExerciseList);
                 } else {
                     phase = SHORT_REST;
                 }
@@ -423,6 +425,7 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
         private boolean firstTick;
         private int type;
         private int queue;
+        private boolean passedHalfway;
 
         public ExerciseCountDownTimer(long pMillisInFuture, long pCountDownInterval, long pCountDownStart, int pType, String sFinish) {
             this.millisInFuture = pMillisInFuture;
@@ -432,8 +435,10 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
             this.type = pType;
             if ((type & HALFWAY_NOTIFICATION) == HALFWAY_NOTIFICATION) {
                 this.halfwayMillis = millisInFuture / 2;
+                passedHalfway = false;
             } else {
                 this.halfwayMillis = millisInFuture + 1000;
+                passedHalfway = true;
             }
             Log.v("TimerStatus", "setting halfway to " + halfwayMillis);
             if ((type & SAY_INITIAL_NUMBER) == SAY_INITIAL_NUMBER ||
@@ -479,8 +484,9 @@ public class HillSprintActivity extends ActionBarActivity implements View.OnClic
                                 countdownSpeaker.speak("seconds", TextToSpeech.QUEUE_ADD, null);
                             }
                         }
-                        if (Math.abs(millisInFuture - halfwayMillis) < 100) {
+                        if (millisInFuture <= halfwayMillis && !passedHalfway) {
                             countdownSpeaker.speak("Halfway Point", TextToSpeech.QUEUE_FLUSH, null);
+                            passedHalfway = true;
                         }
                         millisInFuture -= countDownInterval;
                         handler.postDelayed(this, countDownInterval);
